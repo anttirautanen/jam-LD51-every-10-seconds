@@ -1,5 +1,6 @@
 public enum Tool
 {
     None,
-    Dirt
+    Dirt,
+    Tarmac
 }
