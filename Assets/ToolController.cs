@@ -23,10 +23,14 @@ public class ToolController : MonoBehaviour
         _toolButtons.Add(Tool.None, root.Q<Button>("NoToolButton"));
         _toolButtons.Add(Tool.Dirt, root.Q<Button>("DirtButton"));
         _toolButtons.Add(Tool.Tarmac, root.Q<Button>("TarmacButton"));
+        _toolButtons.Add(Tool.Runway, root.Q<Button>("RunwayButton"));
+        _toolButtons.Add(Tool.Taxiway, root.Q<Button>("TaxiwayButton"));
 
         _toolButtons[Tool.None].RegisterCallback(OnSelectTool(Tool.None));
         _toolButtons[Tool.Dirt].RegisterCallback(OnSelectTool(Tool.Dirt));
         _toolButtons[Tool.Tarmac].RegisterCallback(OnSelectTool(Tool.Tarmac));
+        _toolButtons[Tool.Runway].RegisterCallback(OnSelectTool(Tool.Runway));
+        _toolButtons[Tool.Taxiway].RegisterCallback(OnSelectTool(Tool.Taxiway));
     }
 
     private EventCallback<ClickEvent> OnSelectTool(Tool selectedTool)

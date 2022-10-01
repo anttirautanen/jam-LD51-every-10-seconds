@@ -2,5 +2,7 @@ public enum Tool
 {
     None,
     Dirt,
-    Tarmac
+    Tarmac,
+    Runway,
+    Taxiway,
 }
