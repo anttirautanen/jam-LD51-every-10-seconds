@@ -22,18 +22,14 @@
         </ui:VisualElement>
         <ui:VisualElement name="Bottom" style="background-color: rgb(0, 0, 0); flex-direction: row; flex-shrink: 0; justify-content: center; align-items: center;">
             <ui:VisualElement name="Buttons" style="flex-direction: row; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
-                <ui:VisualElement name="ToolButton">
-                    <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="Button" class="toolButton">
-                        <ui:VisualElement name="Sprite" class="toolButtonSprite" />
-                        <ui:Label tabindex="-1" text="Dirt" display-tooltip-when-elided="true" class="toolButtonText" />
-                    </ui:Button>
-                </ui:VisualElement>
-                <ui:VisualElement name="ToolButton">
-                    <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="Button" class="toolButton">
-                        <ui:VisualElement name="Sprite" class="toolButtonSprite" style="background-image: url(&apos;project://database/Assets/Tiles/Sprites/OutsideTileAtlas.png?fileID=1191690209&amp;guid=c8f06ebff5d2b469987353a3e76b9cad&amp;type=3#OutsideTileAtlas_1&apos;);" />
-                        <ui:Label tabindex="-1" text="Tarmac" display-tooltip-when-elided="true" class="toolButtonText" />
-                    </ui:Button>
-                </ui:VisualElement>
+                <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="DirtButton" class="toolButton">
+                    <ui:VisualElement name="Sprite" class="toolButtonSprite" />
+                    <ui:Label tabindex="-1" text="Dirt" display-tooltip-when-elided="true" class="toolButtonText" />
+                </ui:Button>
+                <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="Button" class="toolButton">
+                    <ui:VisualElement name="Sprite" class="toolButtonSprite" style="background-image: url(&apos;project://database/Assets/Tiles/Sprites/OutsideTileAtlas.png?fileID=1191690209&amp;guid=c8f06ebff5d2b469987353a3e76b9cad&amp;type=3#OutsideTileAtlas_1&apos;);" />
+                    <ui:Label tabindex="-1" text="Tarmac" display-tooltip-when-elided="true" class="toolButtonText" />
+                </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
