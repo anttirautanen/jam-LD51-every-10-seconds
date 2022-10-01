@@ -27,37 +27,23 @@ public class TrafficController : MonoBehaviour
         }
     }
 
-    public Runway ReserveRunwayForLanding()
+    public (Runway, Gate) ReserveRunwayAndGateForLanding()
     {
         var (runway, _) = _isRunwayFree.FirstOrDefault(kvp => kvp.Value);
         if (runway == null)
         {
-            return null;
+            return (null, null);
         }
 
-        _isRunwayFree[runway] = false;
-        return runway;
-    }
-
-    public Gate ReserveGate()
-    {
         var (gate, _) = _isGateFree.FirstOrDefault(kvp => kvp.Value);
         if (gate == null)
         {
-            return null;
+            return (null, null);
         }
 
         _isGateFree[gate] = false;
-        return gate;
-    }
-
-    public void FreeRunway(Runway runway)
-    {
-        _isRunwayFree[runway] = true;
-    }
-
-    public void FreeGate(Gate gate)
-    {
-        _isGateFree[gate] = true;
+        _isRunwayFree[runway] = false;
+        
+        return (runway, gate);
     }
 }
