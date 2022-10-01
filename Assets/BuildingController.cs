@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -10,6 +12,8 @@ public class BuildingController : MonoBehaviour
     public Tilemap debugTilemap;
     public Tile debugRouteTile;
     public Tile debugRouteDeadEndTile;
+
+    private Dictionary<Vector3Int, List<Vector3Int>> _routeNetwork;
 
     private readonly List<Runway> _runways = new()
     {
@@ -69,8 +73,8 @@ public class BuildingController : MonoBehaviour
 
     private void DrawRouteNetwork()
     {
-        var routeNetwork = DiscoverRouteNetwork();
-        DebugDrawRouteNetwork(routeNetwork);
+        _routeNetwork = DiscoverRouteNetwork();
+        DebugDrawRouteNetwork(_routeNetwork);
     }
 
     private Dictionary<Vector3Int, List<Vector3Int>> DiscoverRouteNetwork()
@@ -102,6 +106,11 @@ public class BuildingController : MonoBehaviour
                     tiles.Add(tilePosition, emptyList);
                 }
             }
+        }
+
+        foreach (var gate in _gates)
+        {
+            tiles.Add(gate.Position, emptyList);
         }
 
         foreach (var (tilePosition, _) in new Dictionary<Vector3Int, List<Vector3Int>>(tiles))
@@ -140,7 +149,54 @@ public class BuildingController : MonoBehaviour
 
     public Path FindPath(Vector3Int from, Vector3Int to)
     {
-        return new Path(new List<Vector3Int>() { from, to });
+        var open = new SortedSet<Vector3Int>(new Comparer(to)) { from };
+        var gScore = new Dictionary<Vector3Int, float> { { from, 0 } };
+        var fScore = new Dictionary<Vector3Int, float> { { from, DistanceToTarget(from, to) } };
+        var cameFrom = new Dictionary<Vector3Int, Vector3Int>();
+
+        while (open.Count > 0)
+        {
+            var current = open.First();
+            if (current == to)
+            {
+                return ReconstructPath(cameFrom, current);
+            }
+
+            open.Remove(current);
+
+            var neighbours = _routeNetwork[current];
+            foreach (var neighbour in neighbours)
+            {
+                var tentativeGScore = gScore[current] + 1;
+                if (tentativeGScore < gScore.GetValueOrDefault(neighbour, float.PositiveInfinity))
+                {
+                    cameFrom[neighbour] = current;
+                    gScore[neighbour] = tentativeGScore;
+                    fScore[neighbour] = tentativeGScore + DistanceToTarget(neighbour, to);
+                    open.Add(neighbour);
+                }
+            }
+        }
+
+        throw new Exception($"No path from {from} to {to} :(");
+    }
+
+    private Path ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int current)
+    {
+        var pathPart = current;
+        var tilePositions = new List<Vector3Int> { pathPart };
+        while (cameFrom.ContainsKey(pathPart))
+        {
+            pathPart = cameFrom[pathPart];
+            tilePositions.Insert(0, pathPart);
+        }
+
+        return new Path(tilePositions);
+    }
+
+    private float DistanceToTarget(Vector3Int from, Vector3Int target)
+    {
+        return Vector3Int.Distance(from, target);
     }
 
     private void DebugDrawRouteNetwork(Dictionary<Vector3Int, List<Vector3Int>> routeNetwork)
@@ -151,5 +207,32 @@ public class BuildingController : MonoBehaviour
             var tile = neighbours.Count < 2 ? debugRouteDeadEndTile : debugRouteTile;
             debugTilemap.SetTile(tilePosition, tile);
         }
+    }
+}
+
+public class Comparer : IComparer<Vector3Int>
+{
+    private Vector3Int _target;
+
+    public Comparer(Vector3Int target)
+    {
+        _target = target;
+    }
+
+    public int Compare(Vector3Int a, Vector3Int b)
+    {
+        var distanceA = Vector3Int.Distance(a, _target);
+        var distanceB = Vector3Int.Distance(b, _target);
+        if (distanceA < distanceB)
+        {
+            return -1;
+        }
+
+        if (distanceA > distanceB)
+        {
+            return 1;
+        }
+
+        return 0;
     }
 }

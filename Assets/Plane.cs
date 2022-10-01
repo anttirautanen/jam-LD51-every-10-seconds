@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public enum PlaneState
@@ -61,14 +62,15 @@ public class Plane : MonoBehaviour
                 if (_effectiveSpeed - taxiSpeed < 2f)
                 {
                     _effectiveSpeed = taxiSpeed;
-                    _state = PlaneState.TaxiToGate;
                     var localPosition = transform.localPosition;
                     _path = _buildingController.FindPath(
                         new Vector3Int(
                             (int)Mathf.Floor(localPosition.x),
                             (int)Mathf.Ceil(localPosition.y)),
                         _gate.Position);
+                    Debug.Log($"PATH FOUND, {_path.TilePositions.First()} -> {_path.TilePositions.Last()}");
                     _pathIndex = 0;
+                    _state = PlaneState.TaxiToGate;
                 }
 
                 break;
