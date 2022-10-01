@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -70,56 +69,15 @@ public class BuildingController : MonoBehaviour
 
     private void DrawRouteNetwork()
     {
-        // listaa kaikki tilet dictionaryyn niin, että on nopea queryttää naapuri-tilejä
-        var allTilePositions = DiscoverTiles(_runways, _taxiways);
-
-        // listaa jokaiselle tilelle, mihin toisiin tileihin siitä tilestä pääsee
-        foreach (var (tilePosition, _) in new Dictionary<Vector3Int, List<Vector3Int>>(allTilePositions))
-        {
-            var neighbours = new List<Vector3Int>();
-            
-            var left = new Vector3Int(tilePosition.x - 1, tilePosition.y);
-            if (allTilePositions.GetValueOrDefault(left) != null)
-            {
-                neighbours.Add(left);
-            }
-
-            var right = new Vector3Int(tilePosition.x + 1, tilePosition.y);
-            if (allTilePositions.GetValueOrDefault(right) != null)
-            {
-                neighbours.Add(right);
-            }
-
-            var up = new Vector3Int(tilePosition.x, tilePosition.y + 1);
-            if (allTilePositions.GetValueOrDefault(up) != null)
-            {
-                neighbours.Add(up);
-            }
-
-            var down = new Vector3Int(tilePosition.x, tilePosition.y - 1);
-            if (allTilePositions.GetValueOrDefault(down) != null)
-            {
-                neighbours.Add(down);
-            }
-
-            allTilePositions[tilePosition] = neighbours;
-        }
-
-        // piirrä kaikki tilet valkoisena omalle tilemapille
-        debugTilemap.ClearAllTiles();
-        foreach (var (tilePosition, neighbours) in allTilePositions)
-        {
-            // piirrä ne tilet, joista pääsee vain yhteen toiseen tileen eri tavalla
-            var tile = neighbours.Count < 2 ? debugRouteDeadEndTile : debugRouteTile;
-            debugTilemap.SetTile(tilePosition, tile);
-        }
+        var routeNetwork = DiscoverRouteNetwork();
+        DebugDrawRouteNetwork(routeNetwork);
     }
 
-    private Dictionary<Vector3Int, List<Vector3Int>> DiscoverTiles(List<Runway> runways, List<Taxiway> taxiways)
+    private Dictionary<Vector3Int, List<Vector3Int>> DiscoverRouteNetwork()
     {
         var emptyList = new List<Vector3Int>();
         var tiles = new Dictionary<Vector3Int, List<Vector3Int>>();
-        foreach (var runway in runways)
+        foreach (var runway in _runways)
         {
             var startX = runway.Start.x < runway.End.x ? runway.Start.x : runway.End.x;
             var endX = runway.Start.x < runway.End.x ? runway.End.x : runway.Start.x;
@@ -130,7 +88,7 @@ public class BuildingController : MonoBehaviour
             }
         }
 
-        foreach (var taxiway in taxiways)
+        foreach (var taxiway in _taxiways)
         {
             var startX = taxiway.Start.x < taxiway.End.x ? taxiway.Start.x : taxiway.End.x;
             var endX = taxiway.Start.x < taxiway.End.x ? taxiway.End.x : taxiway.Start.x;
@@ -146,6 +104,47 @@ public class BuildingController : MonoBehaviour
             }
         }
 
+        foreach (var (tilePosition, _) in new Dictionary<Vector3Int, List<Vector3Int>>(tiles))
+        {
+            var neighbours = new List<Vector3Int>();
+
+            var left = new Vector3Int(tilePosition.x - 1, tilePosition.y);
+            if (tiles.GetValueOrDefault(left) != null)
+            {
+                neighbours.Add(left);
+            }
+
+            var right = new Vector3Int(tilePosition.x + 1, tilePosition.y);
+            if (tiles.GetValueOrDefault(right) != null)
+            {
+                neighbours.Add(right);
+            }
+
+            var up = new Vector3Int(tilePosition.x, tilePosition.y + 1);
+            if (tiles.GetValueOrDefault(up) != null)
+            {
+                neighbours.Add(up);
+            }
+
+            var down = new Vector3Int(tilePosition.x, tilePosition.y - 1);
+            if (tiles.GetValueOrDefault(down) != null)
+            {
+                neighbours.Add(down);
+            }
+
+            tiles[tilePosition] = neighbours;
+        }
+
         return tiles;
+    }
+
+    private void DebugDrawRouteNetwork(Dictionary<Vector3Int, List<Vector3Int>> routeNetwork)
+    {
+        debugTilemap.ClearAllTiles();
+        foreach (var (tilePosition, neighbours) in routeNetwork)
+        {
+            var tile = neighbours.Count < 2 ? debugRouteDeadEndTile : debugRouteTile;
+            debugTilemap.SetTile(tilePosition, tile);
+        }
     }
 }
