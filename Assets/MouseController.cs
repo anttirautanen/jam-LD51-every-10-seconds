@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class MouseController : MonoBehaviour
 {
-    public event Action<Tool, Vector3Int, Vector3Int> OnBuild;
+    public static event Action<Tool, Vector3Int, Vector3Int> OnBuild;
 
     public ToolController toolController;
     public Tilemap toolPreviewTilemap;
@@ -47,20 +46,7 @@ public class MouseController : MonoBehaviour
 
     private void PreviewBuilding(Tool tool, Vector3Int cornerA, Vector3Int cornerB)
     {
-        var areaStartX = cornerA.x < cornerB.x ? cornerA.x : cornerB.x;
-        var areaEndX = cornerA.x < cornerB.x ? cornerB.x : cornerA.x;
-        var areaStartY = cornerA.y < cornerB.y ? cornerA.y : cornerB.y;
-        var areaEndY = cornerA.y < cornerB.y ? cornerB.y : cornerA.y;
-
-        var allTilesInArea = new List<Vector3Int>();
-        for (var x = areaStartX; x <= areaEndX; ++x)
-        {
-            for (var y = areaStartY; y <= areaEndY; ++y)
-            {
-                allTilesInArea.Add(new Vector3Int(x, y));
-            }
-        }
-
+        var allTilesInArea = Utils.GetAllTilesInArea(cornerA, cornerB);
         foreach (var tileInArea in allTilesInArea)
         {
             toolPreviewTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);            
