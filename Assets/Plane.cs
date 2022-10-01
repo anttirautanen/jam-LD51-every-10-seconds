@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 public enum PlaneState
@@ -13,6 +12,8 @@ public class Plane : MonoBehaviour
 {
     public float maxSpeed = 75f;
     public float taxiSpeed = 15f;
+
+    public static readonly Vector3 IntToFloatPositionModifier = new(0.5f, -0.5f);
 
     private Runway _runway;
     private Gate _gate;
@@ -39,44 +40,46 @@ public class Plane : MonoBehaviour
             return;
         }
 
-        // Start breaking after passing runway start
-        if (_state == PlaneState.Landing && transform.localPosition.x >= _runway.Start.x)
-        {
-            _state = PlaneState.Breaking;
-        }
-
-        // When breaking reaches taxi speed
-        if (_state == PlaneState.Breaking && _effectiveSpeed - taxiSpeed < 2f)
-        {
-            _effectiveSpeed = taxiSpeed;
-            _state = PlaneState.TaxiToGate;
-            var localPosition = transform.localPosition;
-            _path = _buildingController.FindPath(
-                new Vector3Int(
-                    (int)Mathf.Floor(localPosition.x),
-                    (int)Mathf.Floor(localPosition.y)),
-                _gate.Position);
-            _pathIndex = 0;
-        }
-
-        if (_state == PlaneState.TaxiToGate && Vector3.Distance(transform.localPosition, _path.TilePositions.Last()) < 0.1f)
-        {
-            _state = PlaneState.StandBy;
-        }
-
         switch (_state)
         {
             case PlaneState.Landing:
-                MoveTowardsRunwayEnd();
+                MoveTowards(_runway.End);
+
+                // When plane passes runway start, start breaking
+                if (transform.localPosition.x >= _runway.Start.x)
+                {
+                    _state = PlaneState.Breaking;
+                }
+
                 break;
 
             case PlaneState.Breaking:
                 _effectiveSpeed = Mathf.Clamp(_effectiveSpeed - 50f * Time.deltaTime, taxiSpeed, maxSpeed);
-                MoveTowardsRunwayEnd();
+                MoveTowards(_runway.End);
+
+                // When breaking reaches taxi speed
+                if (_effectiveSpeed - taxiSpeed < 2f)
+                {
+                    _effectiveSpeed = taxiSpeed;
+                    _state = PlaneState.TaxiToGate;
+                    var localPosition = transform.localPosition;
+                    _path = _buildingController.FindPath(
+                        new Vector3Int(
+                            (int)Mathf.Floor(localPosition.x),
+                            (int)Mathf.Ceil(localPosition.y)),
+                        _gate.Position);
+                    _pathIndex = 0;
+                }
+
                 break;
 
             case PlaneState.TaxiToGate:
-                FollowPath();
+                var hasReachedTarget = FollowPath();
+                if (hasReachedTarget)
+                {
+                    _state = PlaneState.StandBy;
+                }
+
                 break;
 
             case PlaneState.StandBy:
@@ -84,20 +87,29 @@ public class Plane : MonoBehaviour
         }
     }
 
-    private void MoveTowardsRunwayEnd()
-    {
-        transform.localPosition = Vector3.MoveTowards(transform.localPosition, _runway.End, Time.deltaTime * _effectiveSpeed);
-    }
-
-    private void FollowPath()
+    private bool FollowPath()
     {
         var targetPosition = _path.TilePositions[_pathIndex];
-        if (Vector3.Distance(transform.localPosition, targetPosition) < 0.1f)
+        var hasReachedTarget = MoveTowards(targetPosition);
+        if (hasReachedTarget)
         {
+            var isOnFinalLegOfPath = _path.TilePositions.Count - 1 == _pathIndex;
+            if (isOnFinalLegOfPath)
+            {
+                return true;
+            }
+
             _pathIndex++;
-            targetPosition = _path.TilePositions[_pathIndex];
         }
 
-        transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, Time.deltaTime * _effectiveSpeed);
+        return false;
+    }
+
+    private bool MoveTowards(Vector3Int targetPosition)
+    {
+        var modifiedTargetPosition = targetPosition + IntToFloatPositionModifier;
+        var localPosition = transform.localPosition;
+        transform.localPosition = Vector3.MoveTowards(localPosition, modifiedTargetPosition, Time.deltaTime * _effectiveSpeed);
+        return Vector3.Distance(localPosition, modifiedTargetPosition) < 0.1f;
     }
 }

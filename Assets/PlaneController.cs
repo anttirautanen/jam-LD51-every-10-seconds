@@ -21,7 +21,7 @@ public class PlaneController : MonoBehaviour
             {
                 var plane = Instantiate(
                     planePrefab,
-                    runway.Start - new Vector3Int(100, 0),
+                    runway.Start - new Vector3(100, 0.5f),
                     Quaternion.identity,
                     transform
                 );
