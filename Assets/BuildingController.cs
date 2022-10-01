@@ -5,6 +5,7 @@ public class BuildingController : MonoBehaviour
 {
     public ToolController toolController;
     public Tilemap outsideTilemap;
+    public Tilemap paintTilemap;
 
     private void Start()
     {
@@ -14,9 +15,19 @@ public class BuildingController : MonoBehaviour
     private void OnBuild(Tool tool, Vector3Int areaStart, Vector3Int areaEnd)
     {
         var allTilesInArea = Utils.GetAllTilesInArea(areaStart, areaEnd);
-        foreach (var tileInArea in allTilesInArea)
+        if (tool == Tool.Runway)
         {
-            outsideTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);
+            foreach (var tileInArea in allTilesInArea)
+            {
+                paintTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);
+            }
+        }
+        else
+        {
+            foreach (var tileInArea in allTilesInArea)
+            {
+                outsideTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);
+            }
         }
     }
 }

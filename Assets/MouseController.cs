@@ -23,7 +23,7 @@ public class MouseController : MonoBehaviour
     private void Update()
     {
         toolPreviewTilemap.ClearAllTiles();
-        
+
         // Is hovering HUD? Then do not do anything here.
         var mousePosition = Input.mousePosition;
         var hoveredElement = root.panel.Pick(mousePosition);
@@ -31,34 +31,40 @@ public class MouseController : MonoBehaviour
         {
             return;
         }
-     
+
         var hoveredTilePosition = toolPreviewTilemap.WorldToCell(Camera.main!.ScreenToWorldPoint(mousePosition));
-        UpdateMouseDraggingState(hoveredTilePosition);
+
+        // On dragging start
+        if (Input.GetMouseButtonDown(0))
+        {
+            _dragStartTilePosition = hoveredTilePosition;
+            _isDragging = true;
+        }
 
         if (toolController.currentTool != Tool.None)
         {
-            PreviewBuilding(toolController.currentTool, _isDragging ? _dragStartTilePosition : hoveredTilePosition, hoveredTilePosition);
+            // Calculate dragged area
+            var cornerA = _isDragging ? _dragStartTilePosition : hoveredTilePosition;
+            var cornerB = hoveredTilePosition;
+
+            // Can build runway only in horizontal line
+            if (toolController.currentTool == Tool.Runway)
+            {
+                cornerB = new Vector3Int(cornerB.x, cornerA.y);
+            }
+
+            PreviewBuilding(toolController.currentTool, cornerA, cornerB);
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                OnBuild?.Invoke(toolController.currentTool, cornerA, cornerB);
+            }
         }
-    }
 
-    private void UpdateMouseDraggingState(Vector3Int hoveredTilePosition)
-    {
-        var wasDraggingPreviously = _isDragging;
-        var isDraggingNow = Input.GetMouseButton(0);
-        switch (isDraggingNow)
+        // On dragging end
+        if (Input.GetMouseButtonUp(0))
         {
-            case true when !wasDraggingPreviously:
-                _dragStartTilePosition = hoveredTilePosition;
-                _isDragging = true;
-                break;
-            case false when wasDraggingPreviously:
-                _isDragging = false;
-                if (toolController.currentTool != Tool.None)
-                {
-                    OnBuild?.Invoke(toolController.currentTool, _dragStartTilePosition, hoveredTilePosition);
-                }
-
-                break;
+            _isDragging = false;
         }
     }
 

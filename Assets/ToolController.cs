@@ -10,6 +10,8 @@ public class ToolController : MonoBehaviour
     public readonly Dictionary<Tool, Tile> TileTypes = new();
     public Tile dirtTile;
     public Tile tarmacTile;
+    public Tile runwayTile;
+    public Tile taxiwayTile;
 
     private readonly Dictionary<Tool, Button> _toolButtons = new();
 
@@ -17,6 +19,8 @@ public class ToolController : MonoBehaviour
     {
         TileTypes.Add(Tool.Dirt, dirtTile);
         TileTypes.Add(Tool.Tarmac, tarmacTile);
+        TileTypes.Add(Tool.Runway, runwayTile);
+        TileTypes.Add(Tool.Taxiway, taxiwayTile);
 
         var root = uiDocument.rootVisualElement;
 
