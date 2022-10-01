@@ -43,7 +43,7 @@ public class TrafficController : MonoBehaviour
 
         _isGateFree[gate] = false;
         _isRunwayFree[runway] = false;
-        
+
         return (runway, gate);
     }
 }

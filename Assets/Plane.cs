@@ -1,10 +1,12 @@
+using System.Linq;
 using UnityEngine;
 
 public enum PlaneState
 {
     Landing,
     Breaking,
-    TaxiToTerminal,
+    TaxiToGate,
+    StandBy
 }
 
 public class Plane : MonoBehaviour
@@ -14,14 +16,18 @@ public class Plane : MonoBehaviour
 
     private Runway _runway;
     private Gate _gate;
+    private BuildingController _buildingController;
     private bool _slowDownLanding;
     private PlaneState _state = PlaneState.Landing;
-    private float _effectiveSpeed = 0;
+    private float _effectiveSpeed;
+    private Path _path;
+    private int _pathIndex;
 
-    public void Init(Runway runway, Gate gate)
+    public void Init(Runway runway, Gate gate, BuildingController buildingController)
     {
         _runway = runway;
         _gate = gate;
+        _buildingController = buildingController;
         _effectiveSpeed = maxSpeed;
     }
 
@@ -43,7 +49,19 @@ public class Plane : MonoBehaviour
         if (_state == PlaneState.Breaking && _effectiveSpeed - taxiSpeed < 2f)
         {
             _effectiveSpeed = taxiSpeed;
-            _state = PlaneState.TaxiToTerminal;
+            _state = PlaneState.TaxiToGate;
+            var localPosition = transform.localPosition;
+            _path = _buildingController.FindPath(
+                new Vector3Int(
+                    (int)Mathf.Floor(localPosition.x),
+                    (int)Mathf.Floor(localPosition.y)),
+                _gate.Position);
+            _pathIndex = 0;
+        }
+
+        if (_state == PlaneState.TaxiToGate && Vector3.Distance(transform.localPosition, _path.TilePositions.Last()) < 0.1f)
+        {
+            _state = PlaneState.StandBy;
         }
 
         switch (_state)
@@ -57,7 +75,11 @@ public class Plane : MonoBehaviour
                 MoveTowardsRunwayEnd();
                 break;
 
-            case PlaneState.TaxiToTerminal:
+            case PlaneState.TaxiToGate:
+                FollowPath();
+                break;
+
+            case PlaneState.StandBy:
                 break;
         }
     }
@@ -65,5 +87,17 @@ public class Plane : MonoBehaviour
     private void MoveTowardsRunwayEnd()
     {
         transform.localPosition = Vector3.MoveTowards(transform.localPosition, _runway.End, Time.deltaTime * _effectiveSpeed);
+    }
+
+    private void FollowPath()
+    {
+        var targetPosition = _path.TilePositions[_pathIndex];
+        if (Vector3.Distance(transform.localPosition, targetPosition) < 0.1f)
+        {
+            _pathIndex++;
+            targetPosition = _path.TilePositions[_pathIndex];
+        }
+
+        transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, Time.deltaTime * _effectiveSpeed);
     }
 }

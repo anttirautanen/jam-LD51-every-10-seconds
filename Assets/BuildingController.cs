@@ -138,6 +138,11 @@ public class BuildingController : MonoBehaviour
         return tiles;
     }
 
+    public Path FindPath(Vector3Int from, Vector3Int to)
+    {
+        return new Path(new List<Vector3Int>() { from, to });
+    }
+
     private void DebugDrawRouteNetwork(Dictionary<Vector3Int, List<Vector3Int>> routeNetwork)
     {
         debugTilemap.ClearAllTiles();
