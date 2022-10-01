@@ -13,13 +13,15 @@ public class Plane : MonoBehaviour
     public float taxiSpeed = 15f;
 
     private Runway _runway;
+    private Gate _gate;
     private bool _slowDownLanding;
     private PlaneState _state = PlaneState.Landing;
     private float _effectiveSpeed = 0;
 
-    public void Init(Runway runway)
+    public void Init(Runway runway, Gate gate)
     {
         _runway = runway;
+        _gate = gate;
         _effectiveSpeed = maxSpeed;
     }
 
@@ -36,7 +38,7 @@ public class Plane : MonoBehaviour
         {
             _state = PlaneState.Breaking;
         }
-        
+
         // When breaking reaches taxi speed
         if (_state == PlaneState.Breaking && _effectiveSpeed - taxiSpeed < 2f)
         {
@@ -54,7 +56,7 @@ public class Plane : MonoBehaviour
                 _effectiveSpeed = Mathf.Clamp(_effectiveSpeed - 50f * Time.deltaTime, taxiSpeed, maxSpeed);
                 MoveTowardsRunwayEnd();
                 break;
-            
+
             case PlaneState.TaxiToTerminal:
                 break;
         }

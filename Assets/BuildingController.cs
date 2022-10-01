@@ -9,6 +9,7 @@ public class BuildingController : MonoBehaviour
     public Tilemap paintTilemap;
 
     private readonly List<Runway> _runways = new() { new Runway(new Vector3Int(-47, 3), new Vector3Int(46, 3)) };
+    private readonly List<Gate> _gates = new() { new Gate(new Vector3Int(0, 20)), new Gate(new Vector3Int(20, 20)) };
 
     private void Start()
     {
@@ -37,5 +38,10 @@ public class BuildingController : MonoBehaviour
     public List<Runway> GetRunways()
     {
         return _runways;
+    }
+
+    public List<Gate> GetGates()
+    {
+        return _gates;
     }
 }
