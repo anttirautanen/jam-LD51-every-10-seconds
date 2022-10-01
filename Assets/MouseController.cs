@@ -37,7 +37,11 @@ public class MouseController : MonoBehaviour
                 break;
             case false when wasDraggingPreviously:
                 _isDragging = false;
-                OnBuild?.Invoke(toolController.currentTool, _dragStartTilePosition, hoveredTilePosition);
+                if (toolController.currentTool != Tool.None)
+                {
+                    OnBuild?.Invoke(toolController.currentTool, _dragStartTilePosition, hoveredTilePosition);
+                }
+
                 break;
         }
     }
@@ -47,7 +51,7 @@ public class MouseController : MonoBehaviour
         var allTilesInArea = Utils.GetAllTilesInArea(cornerA, cornerB);
         foreach (var tileInArea in allTilesInArea)
         {
-            toolPreviewTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);            
+            toolPreviewTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);
         }
     }
 }
