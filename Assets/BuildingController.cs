@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -6,6 +7,8 @@ public class BuildingController : MonoBehaviour
     public ToolController toolController;
     public Tilemap outsideTilemap;
     public Tilemap paintTilemap;
+
+    private readonly List<Runway> _runways = new() { new Runway(new Vector3Int(-47, 3), new Vector3Int(46, 3)) };
 
     private void Start()
     {
@@ -29,5 +32,10 @@ public class BuildingController : MonoBehaviour
                 outsideTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);
             }
         }
+    }
+
+    public List<Runway> GetRunways()
+    {
+        return _runways;
     }
 }
