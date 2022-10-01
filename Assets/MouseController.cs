@@ -17,8 +17,6 @@ public class MouseController : MonoBehaviour
         var hoveredTilePosition = toolPreviewTilemap.WorldToCell(Camera.main!.ScreenToWorldPoint(Input.mousePosition));
         UpdateMouseDraggingState(hoveredTilePosition);
 
-        Debug.Log($"isDragging:{_isDragging}, dragStart:{_dragStartTilePosition}, dragEnd:{hoveredTilePosition}");
-
         toolPreviewTilemap.ClearAllTiles();
 
         if (toolController.currentTool != Tool.None)
