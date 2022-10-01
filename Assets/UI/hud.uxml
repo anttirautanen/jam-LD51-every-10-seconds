@@ -34,6 +34,14 @@
                     <ui:VisualElement name="Sprite" class="toolButtonSprite" style="background-image: url(&apos;project://database/Assets/Tiles/Sprites/OutsideTileAtlas.png?fileID=1191690209&amp;guid=c8f06ebff5d2b469987353a3e76b9cad&amp;type=3#OutsideTileAtlas_1&apos;);" />
                     <ui:Label tabindex="-1" text="Tarmac" display-tooltip-when-elided="true" class="toolButtonText" />
                 </ui:Button>
+                <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="RunwayButton" class="toolButton">
+                    <ui:VisualElement name="Sprite" class="toolButtonSprite" style="background-image: url(&apos;project://database/Assets/Tiles/Sprites/OutsideTileAtlas.png?fileID=-1338895499&amp;guid=c8f06ebff5d2b469987353a3e76b9cad&amp;type=3#OutsideTileAtlas_8&apos;);" />
+                    <ui:Label tabindex="-1" text="Runway" display-tooltip-when-elided="true" class="toolButtonText" />
+                </ui:Button>
+                <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="TaxiwayButton" class="toolButton">
+                    <ui:VisualElement name="Sprite" class="toolButtonSprite" style="background-image: url(&apos;project://database/Assets/Tiles/Sprites/OutsideTileAtlas.png?fileID=-652489505&amp;guid=c8f06ebff5d2b469987353a3e76b9cad&amp;type=3#OutsideTileAtlas_9&apos;);" />
+                    <ui:Label tabindex="-1" text="Taxiway" display-tooltip-when-elided="true" class="toolButtonText" />
+                </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

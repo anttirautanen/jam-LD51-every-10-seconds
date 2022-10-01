@@ -7,17 +7,17 @@ public class ToolController : MonoBehaviour
 {
     public UIDocument uiDocument;
     public Tool currentTool = Tool.None;
-    public Dictionary<Tool, Tile> TileTypes = new();
+    public readonly Dictionary<Tool, Tile> TileTypes = new();
     public Tile dirtTile;
     public Tile tarmacTile;
-    
+
     private readonly Dictionary<Tool, Button> _toolButtons = new();
 
     private void Start()
     {
         TileTypes.Add(Tool.Dirt, dirtTile);
         TileTypes.Add(Tool.Tarmac, tarmacTile);
-        
+
         var root = uiDocument.rootVisualElement;
 
         _toolButtons.Add(Tool.None, root.Q<Button>("NoToolButton"));
@@ -32,7 +32,6 @@ public class ToolController : MonoBehaviour
     private EventCallback<ClickEvent> OnSelectTool(Tool selectedTool)
     {
         const string activeClassName = "active";
-        
         return _ =>
         {
             currentTool = selectedTool;
