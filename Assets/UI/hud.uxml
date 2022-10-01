@@ -1,0 +1,40 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/hud.uss?fileID=7433441132597879392&amp;guid=f02356cb1bfc440fca4095915b7b16c6&amp;type=3#hud" />
+    <ui:VisualElement name="HUDContainer" style="position: absolute; left: 0; top: 0; right: 0; align-items: stretch; justify-content: space-between; bottom: 0;">
+        <ui:VisualElement name="Top" style="background-color: rgb(0, 0, 0); flex-direction: row; flex-shrink: 0; justify-content: center; align-items: center;">
+            <ui:VisualElement name="HUDItems" style="flex-direction: row; padding-left: 3px; padding-right: 3px; padding-top: 3px; padding-bottom: 3px; align-items: center; justify-content: center;">
+                <ui:Label tabindex="-1" text="Balance" display-tooltip-when-elided="true" name="Label" class="label" />
+                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="BalanceValue" class="value" />
+                <ui:Label tabindex="-1" text="$" display-tooltip-when-elided="true" name="Unit" class="label unit" />
+                <ui:VisualElement name="Separator" style="height: 1px; width: 32px;" />
+                <ui:Label tabindex="-1" text="Income" display-tooltip-when-elided="true" name="Label" class="label" />
+                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="IncomeValue" class="value income" />
+                <ui:Label tabindex="-1" text="$/min" display-tooltip-when-elided="true" name="Unit" class="label unit" />
+                <ui:VisualElement name="Separator" style="height: 1px; width: 32px;" />
+                <ui:Label tabindex="-1" text="Expenses" display-tooltip-when-elided="true" name="Label" class="label" />
+                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="ExpenseValue" class="value expense" />
+                <ui:Label tabindex="-1" text="$/min" display-tooltip-when-elided="true" name="Unit" class="label unit" />
+                <ui:VisualElement name="Separator" style="height: 1px; width: 32px;" />
+                <ui:Label tabindex="-1" text="Planes" display-tooltip-when-elided="true" name="Label" class="label" />
+                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="PlanesValue" class="value" />
+                <ui:Label tabindex="-1" text="/min" display-tooltip-when-elided="true" name="Unit" class="label unit" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="Bottom" style="background-color: rgb(0, 0, 0); flex-direction: row; flex-shrink: 0; justify-content: center; align-items: center;">
+            <ui:VisualElement name="Buttons" style="flex-direction: row; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
+                <ui:VisualElement name="ToolButton">
+                    <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="Button" class="toolButton">
+                        <ui:VisualElement name="Sprite" class="toolButtonSprite" />
+                        <ui:Label tabindex="-1" text="Dirt" display-tooltip-when-elided="true" class="toolButtonText" />
+                    </ui:Button>
+                </ui:VisualElement>
+                <ui:VisualElement name="ToolButton">
+                    <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="Button" class="toolButton">
+                        <ui:VisualElement name="Sprite" class="toolButtonSprite" style="background-image: url(&apos;project://database/Assets/Tiles/Sprites/OutsideTileAtlas.png?fileID=1191690209&amp;guid=c8f06ebff5d2b469987353a3e76b9cad&amp;type=3#OutsideTileAtlas_1&apos;);" />
+                        <ui:Label tabindex="-1" text="Tarmac" display-tooltip-when-elided="true" class="toolButtonText" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
