@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public class MouseController : MonoBehaviour
 {
@@ -8,16 +9,31 @@ public class MouseController : MonoBehaviour
 
     public ToolController toolController;
     public Tilemap toolPreviewTilemap;
+    public UIDocument uiDocument;
 
     private bool _isDragging;
     private Vector3Int _dragStartTilePosition;
+    private VisualElement root;
+
+    private void Start()
+    {
+        root = uiDocument.rootVisualElement;
+    }
 
     private void Update()
     {
-        var hoveredTilePosition = toolPreviewTilemap.WorldToCell(Camera.main!.ScreenToWorldPoint(Input.mousePosition));
-        UpdateMouseDraggingState(hoveredTilePosition);
-
         toolPreviewTilemap.ClearAllTiles();
+        
+        // Is hovering HUD? Then do not do anything here.
+        var mousePosition = Input.mousePosition;
+        var hoveredElement = root.panel.Pick(mousePosition);
+        if (hoveredElement != null)
+        {
+            return;
+        }
+     
+        var hoveredTilePosition = toolPreviewTilemap.WorldToCell(Camera.main!.ScreenToWorldPoint(mousePosition));
+        UpdateMouseDraggingState(hoveredTilePosition);
 
         if (toolController.currentTool != Tool.None)
         {
