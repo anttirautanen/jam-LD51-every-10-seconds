@@ -39,6 +39,8 @@ public class ToolController : MonoBehaviour
         _toolButtons[Tool.Runway].RegisterCallback(OnSelectTool(Tool.Runway));
         _toolButtons[Tool.Taxiway].RegisterCallback(OnSelectTool(Tool.Taxiway));
         _toolButtons[Tool.Gate].RegisterCallback(OnSelectTool(Tool.Gate));
+
+        root.Q<Button>("DismissButton").RegisterCallback((ClickEvent _) => { root.Q<VisualElement>("HelpPanel").AddToClassList("hidden"); });
     }
 
     private EventCallback<ClickEvent> OnSelectTool(Tool selectedTool)
