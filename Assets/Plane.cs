@@ -1,5 +1,5 @@
-using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public enum PlaneState
 {
@@ -13,6 +13,7 @@ public class Plane : MonoBehaviour
 {
     public float maxSpeed = 75f;
     public float taxiSpeed = 15f;
+    public PlaneState state = PlaneState.Landing;
 
     public static readonly Vector3 IntToFloatPositionModifier = new(0.5f, -0.5f);
 
@@ -20,7 +21,6 @@ public class Plane : MonoBehaviour
     private Gate _gate;
     private BuildingController _buildingController;
     private bool _slowDownLanding;
-    private PlaneState _state = PlaneState.Landing;
     private float _effectiveSpeed;
     private Path _path;
     private int _pathIndex;
@@ -36,12 +36,12 @@ public class Plane : MonoBehaviour
     private void Update()
     {
         // This plane has not yet been initialized
-        if (_state == PlaneState.Landing && _runway == null)
+        if (state == PlaneState.Landing && _runway == null)
         {
             return;
         }
 
-        switch (_state)
+        switch (state)
         {
             case PlaneState.Landing:
                 MoveTowards(_runway.End);
@@ -49,7 +49,7 @@ public class Plane : MonoBehaviour
                 // When plane passes runway start, start breaking
                 if (transform.localPosition.x >= _runway.Start.x)
                 {
-                    _state = PlaneState.Breaking;
+                    state = PlaneState.Breaking;
                 }
 
                 break;
@@ -71,7 +71,7 @@ public class Plane : MonoBehaviour
                     if (_path != null)
                     {
                         _pathIndex = 0;
-                        _state = PlaneState.TaxiToGate;
+                        state = PlaneState.TaxiToGate;
                     }
                 }
 
@@ -81,7 +81,7 @@ public class Plane : MonoBehaviour
                 var hasReachedTarget = FollowPath();
                 if (hasReachedTarget)
                 {
-                    _state = PlaneState.StandBy;
+                    state = PlaneState.StandBy;
                 }
 
                 break;

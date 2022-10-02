@@ -5,6 +5,7 @@ using UnityEngine;
 public class TrafficController : MonoBehaviour
 {
     public BuildingController buildingController;
+    public PlaneController planeController;
 
     private List<Runway> _runways;
     private List<Gate> _gates;
@@ -51,5 +52,28 @@ public class TrafficController : MonoBehaviour
         _isRunwayFree[runway] = false;
 
         return (runway, gate);
+    }
+
+    private void Update()
+    {
+        foreach (var runway in _runways)
+        {
+            if (runway.HasPlaneInLandingState())
+            {
+                continue;
+            }
+
+            var isAnyPlaneOnRunway = planeController.Planes().Any(plane => IsPlaneOnRunway(plane, runway));
+            if (!isAnyPlaneOnRunway)
+            {
+                _isRunwayFree[runway] = true;
+            }
+        }
+    }
+
+    private static bool IsPlaneOnRunway(Plane plane, Runway runway)
+    {
+        var runwayTiles = Utils.GetAllTilesInArea(runway.Start, runway.End);
+        return runwayTiles.Any(runwayTile => Vector3.Distance(runwayTile, plane.transform.localPosition) < 5f);
     }
 }
