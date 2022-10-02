@@ -149,13 +149,15 @@ public class BuildingController : MonoBehaviour
 
     public Path FindPath(Vector3Int from, Vector3Int to)
     {
-        var open = new SortedSet<Vector3Int>(new Comparer(to)) { from };
+        var open = new List<Vector3Int> { from };
         var gScore = new Dictionary<Vector3Int, float> { { from, 0 } };
         var fScore = new Dictionary<Vector3Int, float> { { from, DistanceToTarget(from, to) } };
         var cameFrom = new Dictionary<Vector3Int, Vector3Int>();
 
         while (open.Count > 0)
         {
+            open.Sort(SortByFScoreFunction(fScore));
+
             var current = open.First();
             if (current == to)
             {
@@ -199,6 +201,26 @@ public class BuildingController : MonoBehaviour
         return Vector3Int.Distance(from, target);
     }
 
+    private Comparison<Vector3Int> SortByFScoreFunction(Dictionary<Vector3Int, float> fScore)
+    {
+        return (a, b) =>
+        {
+            var distanceA = fScore[a];
+            var distanceB = fScore[b];
+            if (distanceA < distanceB)
+            {
+                return -1;
+            }
+
+            if (distanceA > distanceB)
+            {
+                return 1;
+            }
+
+            return 0;
+        };
+    }
+
     private void DebugDrawRouteNetwork(Dictionary<Vector3Int, List<Vector3Int>> routeNetwork)
     {
         debugTilemap.ClearAllTiles();
@@ -210,11 +232,11 @@ public class BuildingController : MonoBehaviour
     }
 }
 
-public class Comparer : IComparer<Vector3Int>
+public class CompareByDistanceToTarget : IComparer<Vector3Int>
 {
     private Vector3Int _target;
 
-    public Comparer(Vector3Int target)
+    public CompareByDistanceToTarget(Vector3Int target)
     {
         _target = target;
     }
