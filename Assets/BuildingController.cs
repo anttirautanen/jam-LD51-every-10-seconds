@@ -40,8 +40,13 @@ public class BuildingController : MonoBehaviour
                     return false;
                 }
 
-                // Add padding to area
-                return IsCompletelyOnTopOfDirt(areaStart, areaEnd);
+                var paddedAreaStartX = areaStart.x < areaEnd.x ? areaStart.x : areaEnd.x;
+                var paddedAreaStartY = areaStart.y < areaEnd.y ? areaStart.y : areaEnd.y;
+                var paddedAreaEndX = areaStart.x < areaEnd.x ? areaEnd.x : areaStart.x;
+                var paddedAreaEndY = areaStart.y < areaEnd.y ? areaEnd.y : areaStart.y;
+                var paddedAreaStart = new Vector3Int(paddedAreaStartX - 2, paddedAreaStartY - 2);
+                var paddedAreaEnd = new Vector3Int(paddedAreaEndX + 2, paddedAreaEndY + 2);
+                return IsCompletelyOnTopOfDirt(paddedAreaStart, paddedAreaEnd);
             default:
                 return true;
         }
