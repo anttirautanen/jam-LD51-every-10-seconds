@@ -14,29 +14,22 @@ public class BuildingController : MonoBehaviour
     public Tile debugRouteDeadEndTile;
 
     private Dictionary<Vector3Int, List<Vector3Int>> _routeNetwork;
-
-    private readonly List<Runway> _runways = new()
-    {
-        // new Runway(new Vector3Int(-47, 3), new Vector3Int(46, 3))
-    };
-
-    private readonly List<Taxiway> _taxiways = new()
-    {
-        // new Taxiway(new Vector3Int(-37, 4), new Vector3Int(-37, 21)),
-        // new Taxiway(new Vector3Int(-36, 21), new Vector3Int(-12, 21)),
-        // new Taxiway(new Vector3Int(-26, 23), new Vector3Int(-26, 22)),
-        // new Taxiway(new Vector3Int(-12, 23), new Vector3Int(-12, 22))
-    };
-
-    private readonly List<Gate> _gates = new()
-    {
-        // new Gate(new Vector3Int(-12, 24)),
-        // new Gate(new Vector3Int(-26, 24))
-    };
+    private readonly List<Runway> _runways = new();
+    private readonly List<Taxiway> _taxiways = new();
+    private readonly List<Gate> _gates = new();
 
     private void Start()
     {
         MouseController.OnBuild += OnBuild;
+    }
+
+    public bool CanBuild(Tool tool, Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        switch (tool)
+        {
+            default:
+                return true;
+        }
     }
 
     private void OnBuild(Tool tool, Vector3Int areaStart, Vector3Int areaEnd)

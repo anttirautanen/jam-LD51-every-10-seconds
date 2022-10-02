@@ -10,6 +10,8 @@ public class MouseController : MonoBehaviour
     public ToolController toolController;
     public Tilemap toolPreviewTilemap;
     public UIDocument uiDocument;
+    public BuildingController buildingController;
+    public Tile errorTile;
 
     private bool _isDragging;
     private Vector3Int _dragStartTilePosition;
@@ -41,30 +43,32 @@ public class MouseController : MonoBehaviour
             _isDragging = true;
         }
 
-        if (toolController.currentTool != Tool.None)
+        var currentTool = toolController.currentTool;
+        if (currentTool != Tool.None)
         {
             // Calculate dragged area
             var cornerA = _isDragging ? _dragStartTilePosition : hoveredTilePosition;
             var cornerB = hoveredTilePosition;
 
             // Can build runway only in horizontal line
-            if (toolController.currentTool == Tool.Runway)
+            if (currentTool == Tool.Runway)
             {
                 cornerB = new Vector3Int(cornerB.x, cornerA.y);
             }
 
             // Can build runway only in single tile
-            if (toolController.currentTool == Tool.Gate)
+            if (currentTool == Tool.Gate)
             {
                 cornerA = hoveredTilePosition;
                 cornerB = hoveredTilePosition;
             }
 
-            PreviewBuilding(toolController.currentTool, cornerA, cornerB);
+            var canBuild = buildingController.CanBuild(currentTool, cornerA, cornerB);
+            PreviewBuilding(currentTool, cornerA, cornerB, canBuild);
 
-            if (Input.GetMouseButtonUp(0))
+            if (canBuild && Input.GetMouseButtonUp(0))
             {
-                OnBuild?.Invoke(toolController.currentTool, cornerA, cornerB);
+                OnBuild?.Invoke(currentTool, cornerA, cornerB);
             }
         }
 
@@ -75,12 +79,12 @@ public class MouseController : MonoBehaviour
         }
     }
 
-    private void PreviewBuilding(Tool tool, Vector3Int cornerA, Vector3Int cornerB)
+    private void PreviewBuilding(Tool tool, Vector3Int cornerA, Vector3Int cornerB, bool canBuild)
     {
         var allTilesInArea = Utils.GetAllTilesInArea(cornerA, cornerB);
         foreach (var tileInArea in allTilesInArea)
         {
-            toolPreviewTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);
+            toolPreviewTilemap.SetTile(tileInArea, canBuild ? toolController.TileTypes[tool] : errorTile);
         }
     }
 }
