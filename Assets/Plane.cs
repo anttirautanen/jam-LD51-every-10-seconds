@@ -17,8 +17,6 @@ public class Plane : MonoBehaviour
     public float breakingSpeed = 45f;
     public PlaneState state = PlaneState.Landing;
 
-    public static readonly Vector3 IntToFloatPositionModifier = new(0.5f, -0.5f);
-
     private Runway _runway;
     private Gate _gate;
     private BuildingController _buildingController;
@@ -172,9 +170,8 @@ public class Plane : MonoBehaviour
 
     private bool MoveTowards(Vector3Int targetPosition)
     {
-        var modifiedTargetPosition = targetPosition + IntToFloatPositionModifier;
         var localPosition = transform.localPosition;
-        transform.localPosition = Vector3.MoveTowards(localPosition, modifiedTargetPosition, Time.deltaTime * _effectiveSpeed);
-        return Vector3.Distance(localPosition, modifiedTargetPosition) < 0.1f;
+        transform.localPosition = Vector3.MoveTowards(localPosition, targetPosition, Time.deltaTime * _effectiveSpeed);
+        return Vector3.Distance(localPosition, targetPosition) < 0.1f;
     }
 }

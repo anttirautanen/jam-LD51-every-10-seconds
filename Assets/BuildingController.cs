@@ -34,7 +34,7 @@ public class BuildingController : MonoBehaviour
         {
             return false;
         }
-        
+
         switch (tool)
         {
             case Tool.Dirt:
@@ -84,7 +84,7 @@ public class BuildingController : MonoBehaviour
     {
         var costsPerTile = new Dictionary<Tool, decimal>
         {
-            { Tool.Dirt, 550 },
+            { Tool.Dirt, 575 },
             { Tool.Tarmac, 100 },
             { Tool.Runway, 200 },
             { Tool.Taxiway, 50 },
