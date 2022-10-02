@@ -26,4 +26,14 @@ public class Runway
 
         return false;
     }
+
+    public bool HasPlaneAboutToTakeOff()
+    {
+        if (AssignedPlane != null)
+        {
+            return AssignedPlane.state is PlaneState.TakeOff or PlaneState.TaxiToRunway or PlaneState.StandBy;
+        }
+
+        return false;
+    }
 }

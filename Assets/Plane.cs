@@ -1,12 +1,13 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public enum PlaneState
 {
     Landing,
     Breaking,
     TaxiToGate,
-    StandBy
+    StandBy,
+    TaxiToRunway,
+    TakeOff
 }
 
 public class Plane : MonoBehaviour
@@ -20,16 +21,19 @@ public class Plane : MonoBehaviour
     private Runway _runway;
     private Gate _gate;
     private BuildingController _buildingController;
+    private TrafficController _trafficController;
     private bool _slowDownLanding;
     private float _effectiveSpeed;
     private Path _path;
     private int _pathIndex;
+    private float _standByStartedAt;
 
-    public void Init(Runway runway, Gate gate, BuildingController buildingController)
+    public void Init(Runway runway, Gate gate, BuildingController buildingController, TrafficController trafficController)
     {
         _runway = runway;
         _gate = gate;
         _buildingController = buildingController;
+        _trafficController = trafficController;
         _effectiveSpeed = maxSpeed;
     }
 
@@ -78,15 +82,51 @@ public class Plane : MonoBehaviour
                 break;
 
             case PlaneState.TaxiToGate:
-                var hasReachedTarget = FollowPath();
-                if (hasReachedTarget)
+                var hasReachedGate = FollowPath();
+                if (hasReachedGate)
                 {
+                    _runway = null;
+                    _path = null;
                     state = PlaneState.StandBy;
+                    _standByStartedAt = Time.time;
                 }
 
                 break;
 
             case PlaneState.StandBy:
+                var hasCompletedStandBy = Time.time - _standByStartedAt > 5;
+                var hasReservedRunway = _runway != null;
+                if (hasCompletedStandBy && !hasReservedRunway)
+                {
+                    var runway = _trafficController.ReserveRunwayForTakeOff(_gate);
+                    if (runway != null)
+                    {
+                        runway.AssignPlane(this);
+                        _runway = runway;
+                    }
+                }
+
+                var hasPathToRunway = _path != null;
+                if (hasReservedRunway && !hasPathToRunway)
+                {
+                    _path = _buildingController.FindPath(_gate.Position, _runway.Start);
+                    if (_path != null)
+                    {
+                        _pathIndex = 0;
+                        state = PlaneState.TaxiToRunway;
+                    }
+                }
+
+                break;
+            case PlaneState.TaxiToRunway:
+                var hasReachedRunway = FollowPath();
+                if (hasReachedRunway)
+                {
+                    Debug.Log("Plane reached runway start, taking off...");
+                    _path = null;
+                    state = PlaneState.TakeOff;
+                }
+
                 break;
         }
     }

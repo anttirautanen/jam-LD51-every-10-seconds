@@ -54,11 +54,35 @@ public class TrafficController : MonoBehaviour
         return (runway, gate);
     }
 
+    public Runway ReserveRunwayForTakeOff(Gate from)
+    {
+        var (runway, _) = _isRunwayFree.FirstOrDefault(kvp => kvp.Value);
+        if (runway == null)
+        {
+            return null;
+        }
+        
+        var pathExistsBetweenGateAndRunway = buildingController.FindPath(from.Position, runway.Start) != null;
+        if (!pathExistsBetweenGateAndRunway)
+        {
+            return null;
+        }
+
+        _isRunwayFree[runway] = false;
+
+        return runway;
+    }
+
     private void Update()
     {
         foreach (var runway in _runways)
         {
             if (runway.HasPlaneInLandingState())
+            {
+                continue;
+            }
+            
+            if (runway.HasPlaneAboutToTakeOff())
             {
                 continue;
             }
