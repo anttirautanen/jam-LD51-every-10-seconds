@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
@@ -15,11 +16,11 @@ public class MouseController : MonoBehaviour
 
     private bool _isDragging;
     private Vector3Int _dragStartTilePosition;
-    private VisualElement root;
+    private VisualElement _root;
 
     private void Start()
     {
-        root = uiDocument.rootVisualElement;
+        _root = uiDocument.rootVisualElement;
     }
 
     private void Update()
@@ -28,7 +29,7 @@ public class MouseController : MonoBehaviour
 
         // Is hovering HUD? Then do not do anything here.
         var mousePosition = Input.mousePosition;
-        var hoveredElement = root.panel.Pick(mousePosition);
+        var hoveredElement = _root.panel.Pick(mousePosition);
         if (hoveredElement != null)
         {
             return;
@@ -66,6 +67,11 @@ public class MouseController : MonoBehaviour
             var canBuild = buildingController.CanBuild(currentTool, cornerA, cornerB);
             PreviewBuilding(currentTool, cornerA, cornerB, canBuild);
 
+            if (_isDragging)
+            {
+                PreviewCost(buildingController.GetCost(currentTool, cornerA, cornerB));
+            }
+
             if (canBuild && Input.GetMouseButtonUp(0))
             {
                 OnBuild?.Invoke(currentTool, cornerA, cornerB);
@@ -75,6 +81,7 @@ public class MouseController : MonoBehaviour
         // On dragging end
         if (Input.GetMouseButtonUp(0))
         {
+            StopPreviewingCost();
             _isDragging = false;
         }
     }
@@ -86,5 +93,17 @@ public class MouseController : MonoBehaviour
         {
             toolPreviewTilemap.SetTile(tileInArea, canBuild ? toolController.TileTypes[tool] : errorTile);
         }
+    }
+
+    private void PreviewCost(decimal cost)
+    {
+        var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+        nfi.NumberGroupSeparator = " ";
+        _root.Q<Label>("CostPreviewLabel").text = $" –{cost.ToString("N0", nfi)}";
+    }
+
+    private void StopPreviewingCost()
+    {
+        _root.Q<Label>("CostPreviewLabel").text = "";
     }
 }

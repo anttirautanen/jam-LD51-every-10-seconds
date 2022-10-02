@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,10 +10,12 @@ public class ScoreController : MonoBehaviour
     public UIDocument uiDocument;
 
     private readonly List<float> _missedPlanesAtTime = new();
+    public decimal balance = 1000000;
 
     private void Start()
     {
         StartCoroutine(nameof(DisplayScore));
+        UpdateBalanceView();
     }
 
     private IEnumerator DisplayScore()
@@ -22,7 +25,7 @@ public class ScoreController : MonoBehaviour
             var aMinuteAgo = Time.time - 60f;
             var missedPlanesWithinOneMinute = _missedPlanesAtTime.Count(missedPlaneAtTime => missedPlaneAtTime > aMinuteAgo);
             var secondsSinceLastMiss = _missedPlanesAtTime.Count > 0 ? Mathf.RoundToInt(Time.time - _missedPlanesAtTime.Last()) : 0;
-            
+
             var root = uiDocument.rootVisualElement;
             root.Q<Label>("ScoreValue").text = $"{missedPlanesWithinOneMinute}";
             root.Q<Label>("TimeSinceLastMissValue").text = $"{secondsSinceLastMiss}";
@@ -45,5 +48,24 @@ public class ScoreController : MonoBehaviour
         yield return new WaitForSeconds(5);
         var root = uiDocument.rootVisualElement;
         root.Q<Label>("MissReason").AddToClassList("invisible");
+    }
+
+    public bool CanPay(decimal cost)
+    {
+        return balance - cost >= 0;
+    }
+
+    public void RemoveFromBalance(decimal cost)
+    {
+        balance -= cost;
+        UpdateBalanceView();
+    }
+
+    private void UpdateBalanceView()
+    {
+        var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+        nfi.NumberGroupSeparator = " ";
+        var root = uiDocument.rootVisualElement;
+        root.Q<Label>("BalanceValue").text = $"{balance.ToString("N0", nfi)}";
     }
 }

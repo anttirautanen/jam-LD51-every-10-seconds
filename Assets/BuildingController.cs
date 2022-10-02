@@ -7,6 +7,7 @@ using UnityEngine.Tilemaps;
 public class BuildingController : MonoBehaviour
 {
     public ToolController toolController;
+    public ScoreController scoreController;
     public Tilemap outsideTilemap;
     public Tilemap paintTilemap;
     public Tilemap debugTilemap;
@@ -28,6 +29,12 @@ public class BuildingController : MonoBehaviour
 
     public bool CanBuild(Tool tool, Vector3Int areaStart, Vector3Int areaEnd)
     {
+        var cost = GetCost(tool, areaStart, areaEnd);
+        if (!scoreController.CanPay(cost))
+        {
+            return false;
+        }
+        
         switch (tool)
         {
             case Tool.Dirt:
@@ -70,6 +77,18 @@ public class BuildingController : MonoBehaviour
             default:
                 return true;
         }
+    }
+
+    public decimal GetCost(Tool tool, Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var costsPerTile = new Dictionary<Tool, decimal>
+        {
+            { Tool.Dirt, 1000 },
+            { Tool.Tarmac, 50 },
+            { Tool.Gate, 100000 }
+        };
+        var tileCount = Utils.GetAllTilesInArea(areaStart, areaEnd).Count;
+        return costsPerTile.GetValueOrDefault(tool, 0) * tileCount;
     }
 
     private bool IsAtLeastPartlyOnTopOfDirt(Vector3Int areaStart, Vector3Int areaEnd)
@@ -237,6 +256,9 @@ public class BuildingController : MonoBehaviour
                 paintTilemap.SetTile(gateTaxiwayTile, toolController.TileTypes[Tool.Taxiway]);
             }
         }
+
+        var cost = GetCost(tool, areaStart, areaEnd);
+        scoreController.RemoveFromBalance(cost);
 
         _routeNetwork = DiscoverRouteNetwork();
         // DebugDrawRouteNetwork(_routeNetwork);
