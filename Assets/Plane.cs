@@ -16,6 +16,7 @@ public class Plane : MonoBehaviour
     public float taxiSpeed = 15f;
     public float breakingSpeed = 45f;
     public PlaneState state = PlaneState.Landing;
+    public Transform sprite;
 
     private Runway _runway;
     private Gate _gate;
@@ -171,6 +172,12 @@ public class Plane : MonoBehaviour
     private bool MoveTowards(Vector3Int targetPosition)
     {
         var localPosition = transform.localPosition;
+        var moveDirection = gameObject.transform.position - targetPosition; 
+        if (moveDirection != Vector3.zero) 
+        {
+            var angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+            sprite.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        }
         transform.localPosition = Vector3.MoveTowards(localPosition, targetPosition, Time.deltaTime * _effectiveSpeed);
         return Vector3.Distance(localPosition, targetPosition) < 0.1f;
     }

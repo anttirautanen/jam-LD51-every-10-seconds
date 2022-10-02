@@ -133,3 +133,4 @@ MonoBehaviour:
   taxiSpeed: 6
   breakingSpeed: 50
   state: 0
+  sprite: {fileID: 8019890083361215173}
