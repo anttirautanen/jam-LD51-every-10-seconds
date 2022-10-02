@@ -60,6 +60,7 @@ public class BuildingController : MonoBehaviour
                 var (paddedRunwayAreaStart, paddedRunwayAreaEnd) = GetPaddedRunwayArea(areaStart, areaEnd);
                 return IsCompletelyOnTopOfTarmac(paddedRunwayAreaStart, paddedRunwayAreaEnd)
                        && !IsAtLeastPartlyOnTopOfGate(paddedRunwayAreaStart, paddedRunwayAreaEnd)
+                       && !IsAtLeastPartlyOnTopOfRunway(paddedRunwayAreaStart, paddedRunwayAreaEnd)
                        && paddedRunwayAreaEnd.x - paddedRunwayAreaStart.x > 60;
 
             case Tool.Taxiway:
@@ -83,8 +84,10 @@ public class BuildingController : MonoBehaviour
     {
         var costsPerTile = new Dictionary<Tool, decimal>
         {
-            { Tool.Dirt, 700 },
-            { Tool.Tarmac, 50 },
+            { Tool.Dirt, 550 },
+            { Tool.Tarmac, 100 },
+            { Tool.Runway, 200 },
+            { Tool.Taxiway, 50 },
             { Tool.Gate, 100000 }
         };
         var tileCount = Utils.GetAllTilesInArea(areaStart, areaEnd).Count;

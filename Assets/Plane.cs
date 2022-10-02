@@ -14,6 +14,7 @@ public class Plane : MonoBehaviour
 {
     public float maxSpeed = 75f;
     public float taxiSpeed = 15f;
+    public float breakingSpeed = 45f;
     public PlaneState state = PlaneState.Landing;
 
     public static readonly Vector3 IntToFloatPositionModifier = new(0.5f, -0.5f);
@@ -67,7 +68,7 @@ public class Plane : MonoBehaviour
                 break;
 
             case PlaneState.Breaking:
-                _effectiveSpeed = Mathf.Clamp(_effectiveSpeed - 50f * Time.deltaTime, taxiSpeed, maxSpeed);
+                _effectiveSpeed = Mathf.Clamp(_effectiveSpeed - breakingSpeed * Time.deltaTime, taxiSpeed, maxSpeed);
                 MoveTowards(_runway.End);
 
                 // When breaking reaches taxi speed
@@ -103,7 +104,7 @@ public class Plane : MonoBehaviour
                 break;
 
             case PlaneState.StandBy:
-                var hasCompletedStandBy = Time.time - _standByStartedAt > 5;
+                var hasCompletedStandBy = Time.time - _standByStartedAt > 20;
                 var hasReservedRunway = _runway != null;
                 if (hasCompletedStandBy && !hasReservedRunway)
                 {

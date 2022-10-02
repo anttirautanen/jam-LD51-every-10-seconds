@@ -20,7 +20,6 @@ public class TrafficController : MonoBehaviour
 
     public (Runway, Gate, string) ReserveRunwayAndGateForLanding()
     {
-        Debug.Log("ReserveRunwayAndGateForLanding");
         var (runway, _) = _isRunwayFree.FirstOrDefault(kvp => kvp.Value);
         if (runway == null)
         {

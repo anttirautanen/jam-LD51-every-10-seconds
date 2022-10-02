@@ -130,5 +130,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 75
-  taxiSpeed: 15
+  taxiSpeed: 6
+  breakingSpeed: 50
   state: 0

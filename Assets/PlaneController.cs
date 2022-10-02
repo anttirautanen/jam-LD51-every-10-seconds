@@ -34,6 +34,7 @@ public class PlaneController : MonoBehaviour
                 runway.AssignPlane(plane);
                 gate.AssignPlane(plane);
                 _planes.Add(plane);
+                scoreController.AddToBalance(10000);
             }
             else
             {
@@ -53,5 +54,6 @@ public class PlaneController : MonoBehaviour
     {
         _planes.Remove(plane);
         Destroy(plane.gameObject);
+        scoreController.AddToBalance(10000);
     }
 }

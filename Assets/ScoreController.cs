@@ -61,6 +61,12 @@ public class ScoreController : MonoBehaviour
         UpdateBalanceView();
     }
 
+    public void AddToBalance(decimal income)
+    {
+        balance += income;
+        UpdateBalanceView();
+    }
+
     private void UpdateBalanceView()
     {
         var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
