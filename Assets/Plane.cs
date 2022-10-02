@@ -15,6 +15,7 @@ public class Plane : MonoBehaviour
     public float maxSpeed = 75f;
     public float taxiSpeed = 15f;
     public float breakingSpeed = 45f;
+    public float accelerationSpeed = 30f;
     public PlaneState state = PlaneState.Landing;
     public Transform sprite;
 
@@ -139,7 +140,7 @@ public class Plane : MonoBehaviour
 
                 break;
             case PlaneState.TakeOff:
-                _effectiveSpeed = Mathf.Clamp(_effectiveSpeed + 35f * Time.deltaTime, taxiSpeed, maxSpeed);
+                _effectiveSpeed = Mathf.Clamp(_effectiveSpeed + accelerationSpeed * Time.deltaTime, taxiSpeed, maxSpeed);
                 var hasReachedExitPoint = MoveTowards(_runway.End + new Vector3Int(100, 0));
                 if (hasReachedExitPoint)
                 {

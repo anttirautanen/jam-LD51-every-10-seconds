@@ -129,8 +129,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63bf45c461b3f4337b92b4d91d7f60b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 75
+  maxSpeed: 50
   taxiSpeed: 6
-  breakingSpeed: 50
+  breakingSpeed: 20
+  accelerationSpeed: 25
   state: 0
   sprite: {fileID: 8019890083361215173}
