@@ -6,6 +6,7 @@ public class PlaneController : MonoBehaviour
 {
     public TrafficController trafficController;
     public BuildingController buildingController;
+    public ScoreController scoreController;
     public Transform planePrefab;
 
     private readonly List<Plane> _planes = new();
@@ -33,8 +34,12 @@ public class PlaneController : MonoBehaviour
                 runway.AssignPlane(plane);
                 _planes.Add(plane);
             }
+            else
+            {
+                scoreController.RecordMissedPlane();
+            }
 
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(10);
         }
     }
 

@@ -3,21 +3,13 @@
     <ui:VisualElement name="HUDContainer" picking-mode="Ignore" style="position: absolute; left: 0; top: 0; right: 0; align-items: stretch; justify-content: space-between; bottom: 0;">
         <ui:VisualElement name="Top" style="background-color: rgb(0, 0, 0); flex-direction: row; flex-shrink: 0; justify-content: center; align-items: center;">
             <ui:VisualElement name="HUDItems" style="flex-direction: row; padding-left: 3px; padding-right: 3px; padding-top: 3px; padding-bottom: 3px; align-items: center; justify-content: center;">
-                <ui:Label tabindex="-1" text="Balance" display-tooltip-when-elided="true" name="Label" class="label" />
-                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="BalanceValue" class="value" />
-                <ui:Label tabindex="-1" text="$" display-tooltip-when-elided="true" name="Unit" class="label unit" />
+                <ui:Label tabindex="-1" text="Missed planes:" display-tooltip-when-elided="true" name="Label" class="label" />
+                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="ScoreValue" class="value" />
+                <ui:Label tabindex="-1" text="in the last 60 seconds" display-tooltip-when-elided="true" name="Unit" class="label unit" />
                 <ui:VisualElement name="Separator" style="height: 1px; width: 32px;" />
-                <ui:Label tabindex="-1" text="Income" display-tooltip-when-elided="true" name="Label" class="label" />
-                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="IncomeValue" class="value income" />
-                <ui:Label tabindex="-1" text="$/min" display-tooltip-when-elided="true" name="Unit" class="label unit" />
-                <ui:VisualElement name="Separator" style="height: 1px; width: 32px;" />
-                <ui:Label tabindex="-1" text="Expenses" display-tooltip-when-elided="true" name="Label" class="label" />
-                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="ExpenseValue" class="value expense" />
-                <ui:Label tabindex="-1" text="$/min" display-tooltip-when-elided="true" name="Unit" class="label unit" />
-                <ui:VisualElement name="Separator" style="height: 1px; width: 32px;" />
-                <ui:Label tabindex="-1" text="Planes" display-tooltip-when-elided="true" name="Label" class="label" />
-                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="PlanesValue" class="value" />
-                <ui:Label tabindex="-1" text="/min" display-tooltip-when-elided="true" name="Unit" class="label unit" />
+                <ui:Label tabindex="-1" text="Time since last miss:" display-tooltip-when-elided="true" name="Label" class="label" />
+                <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="TimeSinceLastMissValue" class="value" />
+                <ui:Label tabindex="-1" text="seconds" display-tooltip-when-elided="true" name="Unit" class="label unit" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="Bottom" style="background-color: rgb(0, 0, 0); flex-direction: row; flex-shrink: 0; justify-content: center; align-items: center;">
