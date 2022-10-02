@@ -48,12 +48,17 @@ public class BuildingController : MonoBehaviour
                 var paddedTarmacAreaStart = new Vector3Int(paddedAreaStartX - 2, paddedAreaStartY - 2);
                 var paddedTarmacAreaEnd = new Vector3Int(paddedAreaEndX + 2, paddedAreaEndY + 2);
                 return IsCompletelyOnTopOfDirt(paddedTarmacAreaStart, paddedTarmacAreaEnd);
-            
+
             case Tool.Runway:
                 var (paddedRunwayAreaStart, paddedRunwayAreaEnd) = GetPaddedRunwayArea(areaStart, areaEnd);
                 return IsCompletelyOnTopOfTarmac(paddedRunwayAreaStart, paddedRunwayAreaEnd)
-                    && !IsAtLeastPartlyOnTopOfGate(paddedRunwayAreaStart, paddedRunwayAreaEnd)
-                    && paddedRunwayAreaEnd.x - paddedRunwayAreaStart.x > 30;
+                       && !IsAtLeastPartlyOnTopOfGate(paddedRunwayAreaStart, paddedRunwayAreaEnd)
+                       && paddedRunwayAreaEnd.x - paddedRunwayAreaStart.x > 30;
+
+            case Tool.Taxiway:
+                var (paddedTaxiwayAreaStart, paddedTaxiwayAreaEnd) = GetPaddedTaxiwayArea(areaStart, areaEnd);
+                return IsCompletelyOnTopOfTarmac(paddedTaxiwayAreaStart, paddedTaxiwayAreaEnd)
+                       && !IsAtLeastPartlyOnTopOfGate(areaStart, areaEnd);
 
             case Tool.Gate:
                 var (gateAreaStart, gateAreaEnd) = GetPaddedGateArea(areaStart);
@@ -212,6 +217,8 @@ public class BuildingController : MonoBehaviour
                 break;
             case Tool.Gate:
                 _gates.Add(new Gate(areaStart));
+                var (gateTaxiwayStart, gateTaxiwayEnd) = GetGateTaxiway(areaStart);
+                _taxiways.Add(new Taxiway(gateTaxiwayStart, gateTaxiwayEnd));
                 break;
         }
 
@@ -221,8 +228,18 @@ public class BuildingController : MonoBehaviour
             (tool is Tool.Runway or Tool.Taxiway or Tool.Gate ? paintTilemap : outsideTilemap).SetTile(tileInArea, toolController.TileTypes[tool]);
         }
 
+        if (tool is Tool.Gate)
+        {
+            var (gateTaxiwayStart, gateTaxiwayEnd) = GetGateTaxiway(areaStart);
+            var allTilesInGateTaxiwayArea = Utils.GetAllTilesInArea(gateTaxiwayStart, gateTaxiwayEnd);
+            foreach (var gateTaxiwayTile in allTilesInGateTaxiwayArea)
+            {
+                paintTilemap.SetTile(gateTaxiwayTile, toolController.TileTypes[Tool.Taxiway]);
+            }
+        }
+
         _routeNetwork = DiscoverRouteNetwork();
-        DebugDrawRouteNetwork(_routeNetwork);
+        // DebugDrawRouteNetwork(_routeNetwork);
     }
 
     public List<Runway> GetRunways()
@@ -392,6 +409,19 @@ public class BuildingController : MonoBehaviour
         var runwayAreaStart = new Vector3Int(start.x, start.y - 3);
         var runwayAreaEnd = new Vector3Int(end.x, end.y + 3);
         return (runwayAreaStart, runwayAreaEnd);
+    }
+
+    private (Vector3Int, Vector3Int) GetPaddedTaxiwayArea(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var (start, end) = Utils.SortCorners(areaStart, areaEnd);
+        var runwayAreaStart = new Vector3Int(start.x - 2, start.y - 2);
+        var runwayAreaEnd = new Vector3Int(end.x + 2, end.y + 2);
+        return (runwayAreaStart, runwayAreaEnd);
+    }
+
+    private (Vector3Int, Vector3Int) GetGateTaxiway(Vector3Int gatePosition)
+    {
+        return (new Vector3Int(gatePosition.x, gatePosition.y - 1), new Vector3Int(gatePosition.x, gatePosition.y - 3));
     }
 
     private void DebugDrawRouteNetwork(Dictionary<Vector3Int, List<Vector3Int>> routeNetwork)
