@@ -33,6 +33,7 @@ public class BuildingController : MonoBehaviour
             case Tool.Dirt:
                 var isOnTopOfAnythingElse = IsAtLeastPartlyOnTopOfDirt(areaStart, areaEnd) || IsAtLeastPartlyOnTopOfTarmac(areaStart, areaEnd);
                 return !isOnTopOfAnythingElse;
+
             case Tool.Tarmac:
                 var isOnTopOfTarmac = IsAtLeastPartlyOnTopOfTarmac(areaStart, areaEnd);
                 if (isOnTopOfTarmac)
@@ -44,9 +45,16 @@ public class BuildingController : MonoBehaviour
                 var paddedAreaStartY = areaStart.y < areaEnd.y ? areaStart.y : areaEnd.y;
                 var paddedAreaEndX = areaStart.x < areaEnd.x ? areaEnd.x : areaStart.x;
                 var paddedAreaEndY = areaStart.y < areaEnd.y ? areaEnd.y : areaStart.y;
-                var paddedAreaStart = new Vector3Int(paddedAreaStartX - 2, paddedAreaStartY - 2);
-                var paddedAreaEnd = new Vector3Int(paddedAreaEndX + 2, paddedAreaEndY + 2);
-                return IsCompletelyOnTopOfDirt(paddedAreaStart, paddedAreaEnd);
+                var paddedTarmacAreaStart = new Vector3Int(paddedAreaStartX - 2, paddedAreaStartY - 2);
+                var paddedTarmacAreaEnd = new Vector3Int(paddedAreaEndX + 2, paddedAreaEndY + 2);
+                return IsCompletelyOnTopOfDirt(paddedTarmacAreaStart, paddedTarmacAreaEnd);
+
+            case Tool.Gate:
+                var (gateAreaStart, gateAreaEnd) = GetPaddedGateArea(areaStart);
+                return IsCompletelyOnTopOfTarmac(gateAreaStart, gateAreaEnd)
+                       && !IsAtLeastPartlyOnTopOfTaxiway(gateAreaStart, gateAreaEnd)
+                       && !IsAtLeastPartlyOnTopOfGate(gateAreaStart, gateAreaEnd);
+
             default:
                 return true;
         }
@@ -95,6 +103,60 @@ public class BuildingController : MonoBehaviour
             foreach (var tarmacTile in tarmacTiles)
             {
                 var index = tilesInQuestion.FindIndex(tileInQuestion => tileInQuestion == tarmacTile);
+                if (index >= 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsCompletelyOnTopOfTarmac(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var tilesInQuestion = Utils.GetAllTilesInArea(areaStart, areaEnd);
+        foreach (var tileInQuestion in tilesInQuestion)
+        {
+            var isOnTopOfTarmac = IsAtLeastPartlyOnTopOfTarmac(tileInQuestion, tileInQuestion);
+            if (!isOnTopOfTarmac)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool IsAtLeastPartlyOnTopOfTaxiway(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var tilesInQuestion = Utils.GetAllTilesInArea(areaStart, areaEnd);
+        foreach (var taxiway in _taxiways)
+        {
+            var taxiwayTiles = Utils.GetAllTilesInArea(taxiway.Start, taxiway.End);
+            foreach (var taxiwayTile in taxiwayTiles)
+            {
+                var index = tilesInQuestion.FindIndex(tileInQuestion => tileInQuestion == taxiwayTile);
+                if (index >= 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsAtLeastPartlyOnTopOfGate(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var tilesInQuestion = Utils.GetAllTilesInArea(areaStart, areaEnd);
+        foreach (var gate in _gates)
+        {
+            var (paddedGateAreaStart, paddedGateAreaEnd) = GetPaddedGateArea(gate.Position);
+            var gateAreaTiles = Utils.GetAllTilesInArea(paddedGateAreaStart, paddedGateAreaEnd);
+            foreach (var gateAreaTile in gateAreaTiles)
+            {
+                var index = tilesInQuestion.FindIndex(tileInQuestion => tileInQuestion == gateAreaTile);
                 if (index >= 0)
                 {
                     return true;
@@ -288,6 +350,13 @@ public class BuildingController : MonoBehaviour
 
             return 0;
         };
+    }
+
+    private (Vector3Int, Vector3Int) GetPaddedGateArea(Vector3Int gatePosition)
+    {
+        var gateAreaStart = new Vector3Int(gatePosition.x - 3, gatePosition.y - 3);
+        var gateAreaEnd = new Vector3Int(gatePosition.x + 3, gatePosition.y + 3);
+        return (gateAreaStart, gateAreaEnd);
     }
 
     private void DebugDrawRouteNetwork(Dictionary<Vector3Int, List<Vector3Int>> routeNetwork)
