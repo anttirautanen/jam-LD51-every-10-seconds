@@ -48,12 +48,19 @@ public class BuildingController : MonoBehaviour
                 var paddedTarmacAreaStart = new Vector3Int(paddedAreaStartX - 2, paddedAreaStartY - 2);
                 var paddedTarmacAreaEnd = new Vector3Int(paddedAreaEndX + 2, paddedAreaEndY + 2);
                 return IsCompletelyOnTopOfDirt(paddedTarmacAreaStart, paddedTarmacAreaEnd);
+            
+            case Tool.Runway:
+                var (paddedRunwayAreaStart, paddedRunwayAreaEnd) = GetPaddedRunwayArea(areaStart, areaEnd);
+                return IsCompletelyOnTopOfTarmac(paddedRunwayAreaStart, paddedRunwayAreaEnd)
+                    && !IsAtLeastPartlyOnTopOfGate(paddedRunwayAreaStart, paddedRunwayAreaEnd)
+                    && paddedRunwayAreaEnd.x - paddedRunwayAreaStart.x > 30;
 
             case Tool.Gate:
                 var (gateAreaStart, gateAreaEnd) = GetPaddedGateArea(areaStart);
                 return IsCompletelyOnTopOfTarmac(gateAreaStart, gateAreaEnd)
                        && !IsAtLeastPartlyOnTopOfTaxiway(gateAreaStart, gateAreaEnd)
-                       && !IsAtLeastPartlyOnTopOfGate(gateAreaStart, gateAreaEnd);
+                       && !IsAtLeastPartlyOnTopOfGate(gateAreaStart, gateAreaEnd)
+                       && !IsAtLeastPartlyOnTopOfRunway(gateAreaStart, gateAreaEnd);
 
             default:
                 return true;
@@ -137,6 +144,26 @@ public class BuildingController : MonoBehaviour
             foreach (var taxiwayTile in taxiwayTiles)
             {
                 var index = tilesInQuestion.FindIndex(tileInQuestion => tileInQuestion == taxiwayTile);
+                if (index >= 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsAtLeastPartlyOnTopOfRunway(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var tilesInQuestion = Utils.GetAllTilesInArea(areaStart, areaEnd);
+        foreach (var runway in _runways)
+        {
+            var (paddedRunwayAreaStart, paddedRunwayAreaEnd) = GetPaddedRunwayArea(runway.Start, runway.End);
+            var runwayAreaTiles = Utils.GetAllTilesInArea(paddedRunwayAreaStart, paddedRunwayAreaEnd);
+            foreach (var runwayAreaTile in runwayAreaTiles)
+            {
+                var index = tilesInQuestion.FindIndex(tileInQuestion => tileInQuestion == runwayAreaTile);
                 if (index >= 0)
                 {
                     return true;
@@ -357,6 +384,14 @@ public class BuildingController : MonoBehaviour
         var gateAreaStart = new Vector3Int(gatePosition.x - 3, gatePosition.y - 3);
         var gateAreaEnd = new Vector3Int(gatePosition.x + 3, gatePosition.y + 3);
         return (gateAreaStart, gateAreaEnd);
+    }
+
+    private (Vector3Int, Vector3Int) GetPaddedRunwayArea(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var (start, end) = Utils.SortCorners(areaStart, areaEnd);
+        var runwayAreaStart = new Vector3Int(start.x, start.y - 3);
+        var runwayAreaEnd = new Vector3Int(end.x, end.y + 3);
+        return (runwayAreaStart, runwayAreaEnd);
     }
 
     private void DebugDrawRouteNetwork(Dictionary<Vector3Int, List<Vector3Int>> routeNetwork)
