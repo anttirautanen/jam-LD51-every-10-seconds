@@ -30,9 +30,74 @@ public class BuildingController : MonoBehaviour
     {
         switch (tool)
         {
+            case Tool.Dirt:
+                var isOnTopOfAnythingElse = IsAtLeastPartlyOnTopOfDirt(areaStart, areaEnd) || IsAtLeastPartlyOnTopOfTarmac(areaStart, areaEnd);
+                return !isOnTopOfAnythingElse;
+            case Tool.Tarmac:
+                var isOnTopOfTarmac = IsAtLeastPartlyOnTopOfTarmac(areaStart, areaEnd);
+                if (isOnTopOfTarmac)
+                {
+                    return false;
+                }
+
+                // Add padding to area
+                return IsCompletelyOnTopOfDirt(areaStart, areaEnd);
             default:
                 return true;
         }
+    }
+
+    private bool IsAtLeastPartlyOnTopOfDirt(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var tilesInQuestion = Utils.GetAllTilesInArea(areaStart, areaEnd);
+        foreach (var (dirtAreaStart, dirtAreaEnd) in _dirt)
+        {
+            var dirtTiles = Utils.GetAllTilesInArea(dirtAreaStart, dirtAreaEnd);
+            foreach (var dirtTile in dirtTiles)
+            {
+                var index = tilesInQuestion.FindIndex(tileInQuestion => tileInQuestion == dirtTile);
+                if (index >= 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsCompletelyOnTopOfDirt(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var tilesInQuestion = Utils.GetAllTilesInArea(areaStart, areaEnd);
+        foreach (var tileInQuestion in tilesInQuestion)
+        {
+            var isOnTopOfDirt = IsAtLeastPartlyOnTopOfDirt(tileInQuestion, tileInQuestion);
+            if (!isOnTopOfDirt)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool IsAtLeastPartlyOnTopOfTarmac(Vector3Int areaStart, Vector3Int areaEnd)
+    {
+        var tilesInQuestion = Utils.GetAllTilesInArea(areaStart, areaEnd);
+        foreach (var (dirtAreaStart, dirtAreaEnd) in _tarmac)
+        {
+            var tarmacTiles = Utils.GetAllTilesInArea(dirtAreaStart, dirtAreaEnd);
+            foreach (var tarmacTile in tarmacTiles)
+            {
+                var index = tilesInQuestion.FindIndex(tileInQuestion => tileInQuestion == tarmacTile);
+                if (index >= 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void OnBuild(Tool tool, Vector3Int areaStart, Vector3Int areaEnd)
