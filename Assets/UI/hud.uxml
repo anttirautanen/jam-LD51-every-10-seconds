@@ -37,4 +37,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement style="position: absolute; top: 40px; left: 40px; right: 40px; flex-direction: row; align-items: center; justify-content: center;">
+        <ui:Label tabindex="-1" text="Miss: no free runways" display-tooltip-when-elided="true" name="MissReason" class="invisible" style="-unity-font: url(&apos;project://database/Library/unity%20default%20resources?fileID=10102&amp;guid=0000000000000000e000000000000000&amp;type=0#Arial&apos;); font-size: 16px; color: rgb(248, 71, 71); background-color: rgb(0, 0, 0); padding-left: 6px; padding-right: 6px; padding-top: 3px; padding-bottom: 3px;" />
+    </ui:VisualElement>
 </ui:UXML>

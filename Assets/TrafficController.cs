@@ -28,34 +28,31 @@ public class TrafficController : MonoBehaviour
         }
     }
 
-    public (Runway, Gate) ReserveRunwayAndGateForLanding()
+    public (Runway, Gate, string) ReserveRunwayAndGateForLanding()
     {
         Debug.Log("ReserveRunwayAndGateForLanding");
         var (runway, _) = _isRunwayFree.FirstOrDefault(kvp => kvp.Value);
         if (runway == null)
         {
-            Debug.Log("--no runway");
-            return (null, null);
+            return (null, null, "no free runways");
         }
 
         var (gate, _) = _isGateFree.FirstOrDefault(kvp => kvp.Value);
         if (gate == null)
         {
-            Debug.Log("--no gate");
-            return (null, null);
+            return (null, null, "no free gates");
         }
 
         var pathExistsBetweenRunwayEndAndGate = buildingController.FindPath(runway.End, gate.Position) != null;
         if (!pathExistsBetweenRunwayEndAndGate)
         {
-            Debug.Log("--no path");
-            return (null, null);
+            return (null, null, "no path from runway to gate");
         }
 
         _isGateFree[gate] = false;
         _isRunwayFree[runway] = false;
 
-        return (runway, gate);
+        return (runway, gate, "");
     }
 
     public Runway ReserveRunwayForTakeOff(Gate from)

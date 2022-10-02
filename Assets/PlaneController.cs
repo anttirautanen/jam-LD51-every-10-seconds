@@ -20,7 +20,7 @@ public class PlaneController : MonoBehaviour
     {
         for (;;)
         {
-            var (runway, gate) = trafficController.ReserveRunwayAndGateForLanding();
+            var (runway, gate, reason) = trafficController.ReserveRunwayAndGateForLanding();
             if (runway != null && gate != null)
             {
                 var planeTransform = Instantiate(
@@ -36,7 +36,7 @@ public class PlaneController : MonoBehaviour
             }
             else
             {
-                scoreController.RecordMissedPlane();
+                scoreController.RecordMissedPlane(reason);
             }
 
             yield return new WaitForSeconds(10);

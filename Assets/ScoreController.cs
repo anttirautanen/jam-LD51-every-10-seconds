@@ -30,8 +30,20 @@ public class ScoreController : MonoBehaviour
         }
     }
 
-    public void RecordMissedPlane()
+    public void RecordMissedPlane(string reason)
     {
         _missedPlanesAtTime.Add(Time.time);
+        var root = uiDocument.rootVisualElement;
+        var missReasonLabel = root.Q<Label>("MissReason");
+        missReasonLabel.text = $"Miss: {reason}";
+        missReasonLabel.RemoveFromClassList("invisible");
+        StartCoroutine(nameof(HideMissReasonLabel));
+    }
+
+    private IEnumerator HideMissReasonLabel()
+    {
+        yield return new WaitForSeconds(5);
+        var root = uiDocument.rootVisualElement;
+        root.Q<Label>("MissReason").AddToClassList("invisible");
     }
 }
