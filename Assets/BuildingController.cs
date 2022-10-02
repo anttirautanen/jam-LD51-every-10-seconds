@@ -60,7 +60,7 @@ public class BuildingController : MonoBehaviour
                 var (paddedRunwayAreaStart, paddedRunwayAreaEnd) = GetPaddedRunwayArea(areaStart, areaEnd);
                 return IsCompletelyOnTopOfTarmac(paddedRunwayAreaStart, paddedRunwayAreaEnd)
                        && !IsAtLeastPartlyOnTopOfGate(paddedRunwayAreaStart, paddedRunwayAreaEnd)
-                       && paddedRunwayAreaEnd.x - paddedRunwayAreaStart.x > 30;
+                       && paddedRunwayAreaEnd.x - paddedRunwayAreaStart.x > 60;
 
             case Tool.Taxiway:
                 var (paddedTaxiwayAreaStart, paddedTaxiwayAreaEnd) = GetPaddedTaxiwayArea(areaStart, areaEnd);
@@ -83,7 +83,7 @@ public class BuildingController : MonoBehaviour
     {
         var costsPerTile = new Dictionary<Tool, decimal>
         {
-            { Tool.Dirt, 1000 },
+            { Tool.Dirt, 700 },
             { Tool.Tarmac, 50 },
             { Tool.Gate, 100000 }
         };
