@@ -5,4 +5,5 @@ public enum Tool
     Tarmac,
     Runway,
     Taxiway,
+    Gate
 }

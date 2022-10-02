@@ -53,6 +53,13 @@ public class MouseController : MonoBehaviour
                 cornerB = new Vector3Int(cornerB.x, cornerA.y);
             }
 
+            // Can build runway only in single tile
+            if (toolController.currentTool == Tool.Gate)
+            {
+                cornerA = hoveredTilePosition;
+                cornerB = hoveredTilePosition;
+            }
+
             PreviewBuilding(toolController.currentTool, cornerA, cornerB);
 
             if (Input.GetMouseButtonUp(0))

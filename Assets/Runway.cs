@@ -5,7 +5,7 @@ public class Runway
     public readonly Vector3Int Start;
     public readonly Vector3Int End;
     public Plane AssignedPlane;
-    
+
     public Runway(Vector3Int start, Vector3Int end)
     {
         Start = start;
@@ -17,9 +17,12 @@ public class Runway
         AssignedPlane = plane;
     }
 
-    public void UnAssignPlane()
+    public void UnAssignPlane(Plane plane)
     {
-        AssignedPlane = null;
+        if (AssignedPlane == plane)
+        {
+            AssignedPlane = null;
+        }
     }
 
     public bool HasPlaneInLandingState()

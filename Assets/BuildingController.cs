@@ -17,36 +17,48 @@ public class BuildingController : MonoBehaviour
 
     private readonly List<Runway> _runways = new()
     {
-        new Runway(new Vector3Int(-47, 3), new Vector3Int(46, 3))
+        // new Runway(new Vector3Int(-47, 3), new Vector3Int(46, 3))
     };
 
     private readonly List<Taxiway> _taxiways = new()
     {
-        new Taxiway(new Vector3Int(-37, 4), new Vector3Int(-37, 21)),
-        new Taxiway(new Vector3Int(-36, 21), new Vector3Int(-12, 21)),
-        new Taxiway(new Vector3Int(-26, 23), new Vector3Int(-26, 22)),
-        new Taxiway(new Vector3Int(-12, 23), new Vector3Int(-12, 22))
+        // new Taxiway(new Vector3Int(-37, 4), new Vector3Int(-37, 21)),
+        // new Taxiway(new Vector3Int(-36, 21), new Vector3Int(-12, 21)),
+        // new Taxiway(new Vector3Int(-26, 23), new Vector3Int(-26, 22)),
+        // new Taxiway(new Vector3Int(-12, 23), new Vector3Int(-12, 22))
     };
 
     private readonly List<Gate> _gates = new()
     {
-        new Gate(new Vector3Int(-12, 24)),
-        new Gate(new Vector3Int(-26, 24))
+        // new Gate(new Vector3Int(-12, 24)),
+        // new Gate(new Vector3Int(-26, 24))
     };
 
     private void Start()
     {
         MouseController.OnBuild += OnBuild;
-
-        DrawRouteNetwork();
     }
 
     private void OnBuild(Tool tool, Vector3Int areaStart, Vector3Int areaEnd)
     {
-        Debug.Log($"{areaStart}, {areaEnd}");
         var allTilesInArea = Utils.GetAllTilesInArea(areaStart, areaEnd);
-        if (tool is Tool.Runway or Tool.Taxiway)
+        if (tool is Tool.Runway or Tool.Taxiway or Tool.Gate)
         {
+            if (tool == Tool.Runway)
+            {
+                _runways.Add(new Runway(areaStart, areaEnd));
+            }
+
+            if (tool == Tool.Taxiway)
+            {
+                _taxiways.Add(new Taxiway(areaStart, areaEnd));
+            }
+
+            if (tool == Tool.Gate)
+            {
+                _gates.Add(new Gate(areaStart));
+            }
+
             foreach (var tileInArea in allTilesInArea)
             {
                 paintTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);
@@ -59,6 +71,9 @@ public class BuildingController : MonoBehaviour
                 outsideTilemap.SetTile(tileInArea, toolController.TileTypes[tool]);
             }
         }
+
+        _routeNetwork = DiscoverRouteNetwork();
+        DrawRouteNetwork();
     }
 
     public List<Runway> GetRunways()
@@ -73,7 +88,6 @@ public class BuildingController : MonoBehaviour
 
     private void DrawRouteNetwork()
     {
-        _routeNetwork = DiscoverRouteNetwork();
         DebugDrawRouteNetwork(_routeNetwork);
     }
 
@@ -180,7 +194,7 @@ public class BuildingController : MonoBehaviour
             }
         }
 
-        throw new Exception($"No path from {from} to {to} :(");
+        return null;
     }
 
     private Path ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int current)

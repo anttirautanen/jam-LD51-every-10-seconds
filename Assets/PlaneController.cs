@@ -32,6 +32,7 @@ public class PlaneController : MonoBehaviour
                 var plane = planeTransform.GetComponent<Plane>();
                 plane.Init(runway, gate, buildingController, trafficController, this);
                 runway.AssignPlane(plane);
+                gate.AssignPlane(plane);
                 _planes.Add(plane);
             }
             else

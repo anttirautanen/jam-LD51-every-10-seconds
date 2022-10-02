@@ -12,6 +12,7 @@ public class ToolController : MonoBehaviour
     public Tile tarmacTile;
     public Tile runwayTile;
     public Tile taxiwayTile;
+    public Tile gateTile;
 
     private readonly Dictionary<Tool, Button> _toolButtons = new();
 
@@ -21,6 +22,7 @@ public class ToolController : MonoBehaviour
         TileTypes.Add(Tool.Tarmac, tarmacTile);
         TileTypes.Add(Tool.Runway, runwayTile);
         TileTypes.Add(Tool.Taxiway, taxiwayTile);
+        TileTypes.Add(Tool.Gate, gateTile);
 
         var root = uiDocument.rootVisualElement;
 
@@ -29,12 +31,14 @@ public class ToolController : MonoBehaviour
         _toolButtons.Add(Tool.Tarmac, root.Q<Button>("TarmacButton"));
         _toolButtons.Add(Tool.Runway, root.Q<Button>("RunwayButton"));
         _toolButtons.Add(Tool.Taxiway, root.Q<Button>("TaxiwayButton"));
+        _toolButtons.Add(Tool.Gate, root.Q<Button>("GateButton"));
 
         _toolButtons[Tool.None].RegisterCallback(OnSelectTool(Tool.None));
         _toolButtons[Tool.Dirt].RegisterCallback(OnSelectTool(Tool.Dirt));
         _toolButtons[Tool.Tarmac].RegisterCallback(OnSelectTool(Tool.Tarmac));
         _toolButtons[Tool.Runway].RegisterCallback(OnSelectTool(Tool.Runway));
         _toolButtons[Tool.Taxiway].RegisterCallback(OnSelectTool(Tool.Taxiway));
+        _toolButtons[Tool.Gate].RegisterCallback(OnSelectTool(Tool.Gate));
     }
 
     private EventCallback<ClickEvent> OnSelectTool(Tool selectedTool)

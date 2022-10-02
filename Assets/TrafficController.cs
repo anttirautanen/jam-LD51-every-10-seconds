@@ -16,16 +16,6 @@ public class TrafficController : MonoBehaviour
     {
         _runways = buildingController.GetRunways();
         _gates = buildingController.GetGates();
-
-        foreach (var runway in _runways)
-        {
-            _isRunwayFree.Add(runway, true);
-        }
-
-        foreach (var gate in _gates)
-        {
-            _isGateFree.Add(gate, true);
-        }
     }
 
     public (Runway, Gate, string) ReserveRunwayAndGateForLanding()
@@ -85,11 +75,13 @@ public class TrafficController : MonoBehaviour
         {
             if (runway.HasPlaneInLandingState())
             {
+                _isRunwayFree[runway] = false;
                 continue;
             }
             
             if (runway.HasPlaneAboutToTakeOff())
             {
+                _isRunwayFree[runway] = false;
                 continue;
             }
 
@@ -97,6 +89,22 @@ public class TrafficController : MonoBehaviour
             if (!isAnyPlaneOnRunway)
             {
                 _isRunwayFree[runway] = true;
+            }
+            else
+            {
+                _isRunwayFree[runway] = false;
+            }
+        }
+        
+        foreach (var gate in _gates)
+        {
+            if (!gate.HasPlaneAboutToEnterOrInStandBy())
+            {
+                _isGateFree[gate] = true;
+            }
+            else
+            {
+                _isGateFree[gate] = false;
             }
         }
     }

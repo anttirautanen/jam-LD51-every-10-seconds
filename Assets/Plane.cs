@@ -93,6 +93,7 @@ public class Plane : MonoBehaviour
                 var hasReachedGate = FollowPath();
                 if (hasReachedGate)
                 {
+                    _runway.UnAssignPlane(this);
                     _runway = null;
                     _path = null;
                     state = PlaneState.StandBy;
@@ -109,6 +110,7 @@ public class Plane : MonoBehaviour
                     var runway = _trafficController.ReserveRunwayForTakeOff(_gate);
                     if (runway != null)
                     {
+                        _gate.UnAssignPlane(this);
                         runway.AssignPlane(this);
                         _runway = runway;
                     }
@@ -141,7 +143,7 @@ public class Plane : MonoBehaviour
                 var hasReachedExitPoint = MoveTowards(_runway.End + new Vector3Int(100, 0));
                 if (hasReachedExitPoint)
                 {
-                    _runway.UnAssignPlane();
+                    _runway.UnAssignPlane(this);
                     _planeController.ExitPlane(this);
                 }
 
