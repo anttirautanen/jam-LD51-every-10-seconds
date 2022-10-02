@@ -29,7 +29,7 @@ public class PlaneController : MonoBehaviour
                     transform
                 );
                 var plane = planeTransform.GetComponent<Plane>();
-                plane.Init(runway, gate, buildingController, trafficController);
+                plane.Init(runway, gate, buildingController, trafficController, this);
                 runway.AssignPlane(plane);
                 _planes.Add(plane);
             }
@@ -41,5 +41,11 @@ public class PlaneController : MonoBehaviour
     public List<Plane> Planes()
     {
         return _planes;
+    }
+
+    public void ExitPlane(Plane plane)
+    {
+        _planes.Remove(plane);
+        Destroy(plane.gameObject);
     }
 }

@@ -22,18 +22,26 @@ public class Plane : MonoBehaviour
     private Gate _gate;
     private BuildingController _buildingController;
     private TrafficController _trafficController;
+    private PlaneController _planeController;
     private bool _slowDownLanding;
     private float _effectiveSpeed;
     private Path _path;
     private int _pathIndex;
     private float _standByStartedAt;
 
-    public void Init(Runway runway, Gate gate, BuildingController buildingController, TrafficController trafficController)
+    public void Init(
+        Runway runway,
+        Gate gate,
+        BuildingController buildingController,
+        TrafficController trafficController,
+        PlaneController planeController
+    )
     {
         _runway = runway;
         _gate = gate;
         _buildingController = buildingController;
         _trafficController = trafficController;
+        _planeController = planeController;
         _effectiveSpeed = maxSpeed;
     }
 
@@ -112,6 +120,7 @@ public class Plane : MonoBehaviour
                     _path = _buildingController.FindPath(_gate.Position, _runway.Start);
                     if (_path != null)
                     {
+                        _trafficController.UnAssignGate(_gate);
                         _pathIndex = 0;
                         state = PlaneState.TaxiToRunway;
                     }
@@ -122,9 +131,18 @@ public class Plane : MonoBehaviour
                 var hasReachedRunway = FollowPath();
                 if (hasReachedRunway)
                 {
-                    Debug.Log("Plane reached runway start, taking off...");
                     _path = null;
                     state = PlaneState.TakeOff;
+                }
+
+                break;
+            case PlaneState.TakeOff:
+                _effectiveSpeed = Mathf.Clamp(_effectiveSpeed + 35f * Time.deltaTime, taxiSpeed, maxSpeed);
+                var hasReachedExitPoint = MoveTowards(_runway.End + new Vector3Int(100, 0));
+                if (hasReachedExitPoint)
+                {
+                    _runway.UnAssignPlane();
+                    _planeController.ExitPlane(this);
                 }
 
                 break;

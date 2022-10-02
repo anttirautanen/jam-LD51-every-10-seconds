@@ -17,6 +17,11 @@ public class Runway
         AssignedPlane = plane;
     }
 
+    public void UnAssignPlane()
+    {
+        AssignedPlane = null;
+    }
+
     public bool HasPlaneInLandingState()
     {
         if (AssignedPlane != null)

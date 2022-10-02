@@ -30,21 +30,25 @@ public class TrafficController : MonoBehaviour
 
     public (Runway, Gate) ReserveRunwayAndGateForLanding()
     {
+        Debug.Log("ReserveRunwayAndGateForLanding");
         var (runway, _) = _isRunwayFree.FirstOrDefault(kvp => kvp.Value);
         if (runway == null)
         {
+            Debug.Log("--no runway");
             return (null, null);
         }
 
         var (gate, _) = _isGateFree.FirstOrDefault(kvp => kvp.Value);
         if (gate == null)
         {
+            Debug.Log("--no gate");
             return (null, null);
         }
 
         var pathExistsBetweenRunwayEndAndGate = buildingController.FindPath(runway.End, gate.Position) != null;
         if (!pathExistsBetweenRunwayEndAndGate)
         {
+            Debug.Log("--no path");
             return (null, null);
         }
 
@@ -71,6 +75,11 @@ public class TrafficController : MonoBehaviour
         _isRunwayFree[runway] = false;
 
         return runway;
+    }
+
+    public void UnAssignGate(Gate gate)
+    {
+        _isGateFree[gate] = true;
     }
 
     private void Update()
