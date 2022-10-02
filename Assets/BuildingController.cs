@@ -231,30 +231,3 @@ public class BuildingController : MonoBehaviour
         }
     }
 }
-
-public class CompareByDistanceToTarget : IComparer<Vector3Int>
-{
-    private Vector3Int _target;
-
-    public CompareByDistanceToTarget(Vector3Int target)
-    {
-        _target = target;
-    }
-
-    public int Compare(Vector3Int a, Vector3Int b)
-    {
-        var distanceA = Vector3Int.Distance(a, _target);
-        var distanceB = Vector3Int.Distance(b, _target);
-        if (distanceA < distanceB)
-        {
-            return -1;
-        }
-
-        if (distanceA > distanceB)
-        {
-            return 1;
-        }
-
-        return 0;
-    }
-}
