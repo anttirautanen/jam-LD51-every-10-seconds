@@ -68,8 +68,11 @@ public class Plane : MonoBehaviour
                             (int)Mathf.Floor(localPosition.x),
                             (int)Mathf.Ceil(localPosition.y)),
                         _gate.Position);
-                    _pathIndex = 0;
-                    _state = PlaneState.TaxiToGate;
+                    if (_path != null)
+                    {
+                        _pathIndex = 0;
+                        _state = PlaneState.TaxiToGate;
+                    }
                 }
 
                 break;

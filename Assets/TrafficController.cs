@@ -41,6 +41,12 @@ public class TrafficController : MonoBehaviour
             return (null, null);
         }
 
+        var pathExistsBetweenRunwayEndAndGate = buildingController.FindPath(runway.End, gate.Position) != null;
+        if (!pathExistsBetweenRunwayEndAndGate)
+        {
+            return (null, null);
+        }
+
         _isGateFree[gate] = false;
         _isRunwayFree[runway] = false;
 
