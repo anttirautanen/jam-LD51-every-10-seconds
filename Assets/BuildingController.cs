@@ -117,7 +117,7 @@ public class BuildingController : MonoBehaviour
                 for (var y = startY; y <= endY; ++y)
                 {
                     var tilePosition = new Vector3Int(x, y);
-                    tiles.Add(tilePosition, emptyList);
+                    tiles.TryAdd(tilePosition, emptyList);
                 }
             }
         }
